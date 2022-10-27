@@ -17,8 +17,9 @@ namespace LostBoy
 {
 
     struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
-  
-    
+    struct Vec2 { public float x; public float y;};
+
+
 
     public class Story
     {
@@ -28,12 +29,30 @@ namespace LostBoy
             "diverted to the sight of a malformed castle, being tarnished by a fantastical beast. You can't believe your eyes; you faint in almost an instant... \n\n\n\n " +
             "You wake up in a dimly lit room; the air reeks of damp laundry. Something is eerily familiar about this place, but you can't piece it together in the shocked state you are in.\n" +
             "You attempt to push yourself off of the ground, and quickly realize your arms are chained to the floor behind you. You begin to panic further, trying to pull yourself off of the rusty chains. " +
-            "As you begin to scream \"LET ME OUT!\" A voice comes from the distance,\n\nUnknown Man: \"Hush! You'll wake the beasts..\" \n\n" +
+            "As you begin to scream \"LET ME OUT!\" A voice comes from the distance,\n\nUnknown Man: \"Hush! You'll wake the beasts..\"\n\n" +
             "You freeze dead in your tracks, chains in hand, paralyzed as you were when you saw the fortress being destroyed. Your eyes slowly shift to the center of the room, where you can see the man" +
             " sitting at a dusty table, with some strange contraptions upon it. Your body, without your control, starts moving towards the table, but are quickly stopped by the chains.. Or so you thought. " +
-            "The man had done something with the chains, now they are dragging on the floor behind you as you begin to sit at the only chair at the table, against your own will.\n\n";
+            "The man had done something with the chains, now they are dragging on the floor behind you as you begin to sit at the only other chair at the table, against your own will.\n\n" +
+            "Strangely enough, the man reaches out to hold one of your hands, and proceeds to speak. \nUnknown Man: \"I've been alone for so long... Please, tell me, what is your name?\"\n";
     }
-    public class Player : character
+
+    public class Map
+    {
+        private Vec3 mapSize;
+        public Map(float map_x, float map_y)
+        {
+            this.mapSize.x = map_x;
+            this.mapSize.y = map_y;
+        }
+    }
+    public class Enemy : Player
+    {
+        public Enemy(Player t)
+        {
+            this.level = (t.level); // Not sure if this is a good way to do this, but essentially taking players level to create a baseline.. May need to set a difficulty instead of this dumb method.
+        }
+    }
+    public class Player : ICharacter
     {
         
         
@@ -41,11 +60,13 @@ namespace LostBoy
         internal static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
 
-        public string name;
+        private string name;
         private float health;
         private float damage;
         private Vec3 location;
         private bool bMoving;
+        public int level = 1;
+        private int experience = 0;
 
         public Player(string inName)
         {
@@ -63,8 +84,11 @@ namespace LostBoy
         }
         public void GetName()
         {
-            Console.Write("Enter your name: ");
-            this.name = Console.ReadLine();
+            do
+            {
+                Console.Write("Enter your name: ");
+                this.name = Console.ReadLine();
+            } while (this.name == "");
         }
         public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
         {
@@ -121,7 +145,7 @@ namespace LostBoy
     {
         static void Main(string[] args)
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Clear();
             Player player = new Player();
@@ -135,7 +159,7 @@ namespace LostBoy
     }
 }
 
-public interface character
+public interface ICharacter
 {
     // Fight
     void Movement(string Ioption);
