@@ -11,9 +11,12 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 
+
+
 namespace LostBoy
 {
-    struct Vec3 { public float x; public float y; public float z; };
+
+    struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
   
     
 
@@ -30,8 +33,10 @@ namespace LostBoy
             " sitting at a dusty table, with some strange contraptions upon it. Your body, without your control, starts moving towards the table, but are quickly stopped by the chains.. Or so you thought. " +
             "The man had done something with the chains, now they are dragging on the floor behind you as you begin to sit at the only chair at the table, against your own will.\n\n";
     }
-    public class Player //: character
+    public class Player : character
     {
+        
+        
         [DllImport("user32.dll")]
         internal static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
@@ -49,10 +54,20 @@ namespace LostBoy
             this.location = new Vec3() { x = 0, y = 0, z = 0 };
             this.name = inName;
         }
+        public Player()
+        {
+            this.health = 100;
+            this.damage = 1;
+            this.location = new Vec3() { x = 0, y = 0, z = 0 };
+            this.name = "Name Not Set. Now, how did that happen?\n";
+        }
+        public void GetName()
+        {
+            Console.Write("Enter your name: ");
+            this.name = Console.ReadLine();
+        }
         public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
         {
-            do
-            {
                 switch (option)
                 {
                     case "d":
@@ -75,9 +90,7 @@ namespace LostBoy
                         Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
                         break;
                 }
-            } while (option != "w" || option != "a" || option != "s" || option != "d");
         }
-
         public void TimedText(string inText, int inSpeed = 50, bool clearConsole = false) // This allows for text to be timed, need to make a skippable feature into this as well, and make it print out the text as a whole if so.
         {
 
@@ -89,28 +102,33 @@ namespace LostBoy
                     clearConsole = false;
                 }
 
-                Console.Write(inText[i-1]); // Main loop of execution for text, takes it one char at a time. Like a char array. -1 to account for array starting at 0.
+                Console.Write(inText[i - 1]); // Main loop of execution for text, takes it one char at a time. Like a char array. -1 to account for array starting at 0.
                 System.Threading.Thread.Sleep(inSpeed);
 
                 if ((GetAsyncKeyState(27) & 0x8000) == 0x8000) // If key pressed, clear the text, and output the text as a whole. 27 = Escape key. 
                 {
-                    Console.WriteLine(inText.Substring(i, (inText.Length-i)));
+                    Console.WriteLine(inText.Substring(i, (inText.Length - i)));
                     break;
                 };
 
             }
         }
-        
+
+
+
     }
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter your name: "); 
-            Player player = new Player(Console.ReadLine());
-            Story t = new Story();
-            player.TimedText(t.introduction, 20, true);
-            Console.ReadLine();
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Clear();
+            Player player = new Player();
+            Story story = new Story();
+            player.TimedText(story.introduction, 10, true);
+            player.GetName();
+            
             
 
         }
@@ -120,7 +138,7 @@ namespace LostBoy
 public interface character
 {
     // Fight
-    // Movement
+    void Movement(string Ioption);
     // Inventory (maybe just local to Player)
     //
 
