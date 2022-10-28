@@ -58,7 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Interfaces.cs" />
+    <Compile Include="Story.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="Enemy.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="LostBoy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
