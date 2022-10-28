@@ -5,11 +5,14 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+// Mostly everything in this was my own implementation, for better or for worse. I wanted to challenge myself to see how far I can get off of my own ideas in crafting
+// my own game. More so a fun project than anything else.
 
 
 
@@ -17,11 +20,11 @@ namespace LostBoy
 {
 
     struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
-    struct Vec2 { public float x; public float y;};
+                                                                     //    struct Vec2 { public float x; public float y;};
 
 
 
-    public class Story
+    public class Story // Not sure if making a story object is better than instantiating within a player object. Just didn't want to do this everytime or have this derived in other classes.
     {
         public string introduction = "On a moonlit night, unlike any other, you stand outside of a breathtaking castle. You take in the air as you stare at the water that separates the land. " +
             "\"What a beautiful sight! I wonder what this castle was like before it was abandoned..\" You think to yourself. As soon as that thought finishes playing in your mind, a sudden chill " +
@@ -39,23 +42,42 @@ namespace LostBoy
     public class Map
     {
         private Vec3 mapSize;
-        public Map(float map_x, float map_y)
+        private int mapDifficulty;
+        public int MapDifficulty
+        {
+            get
+            {
+                return mapDifficulty;
+            }
+            set
+            {
+                mapDifficulty = value;
+            }
+        }
+
+
+        public Map(float map_x, float map_y, int difficulty)
         {
             this.mapSize.x = map_x;
             this.mapSize.y = map_y;
+            this.mapDifficulty = difficulty;
         }
     }
-    public class Enemy : Player
-    {
-        public Enemy(Player t)
+
+
+        public class Enemy : Player
         {
-            this.level = (t.level); // Not sure if this is a good way to do this, but essentially taking players level to create a baseline.. May need to set a difficulty instead of this dumb method.
+            public Enemy(Map map)
+            {
+                this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
+                this.Health = ((this.level * RandomNumber(1, 3)) + 100);
+            }
         }
-    }
+    
     public class Player : ICharacter
     {
-        
-        
+
+
         [DllImport("user32.dll")]
         internal static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
@@ -67,6 +89,11 @@ namespace LostBoy
         private bool bMoving;
         public int level = 1;
         private int experience = 0;
+        public float Health
+        {
+            get { return health; }
+            set { health = value; }
+        }
 
         public Player(string inName)
         {
@@ -90,30 +117,39 @@ namespace LostBoy
                 this.name = Console.ReadLine();
             } while (this.name == "");
         }
+
+
+        public float RandomNumber(float lowerRange, float upperRange)
+        {
+            Random random = new Random();
+            return (float)random.NextDouble() + random.Next((int)lowerRange, (int)upperRange);
+
+
+        }
         public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
         {
-                switch (option)
-                {
-                    case "d":
-                        Console.WriteLine("You have moved to the right.");
-                        this.location.x++;
-                        break;
-                    case "a":
-                        Console.WriteLine("You have moved to the left.");
-                        this.location.x--;
-                        break;
-                    case "w":
-                        Console.WriteLine("You have moved forward.");
-                        this.location.y++;
-                        break;
-                    case "s":
-                        Console.WriteLine("You have moved backward.");
-                        this.location.y--;
-                        break;
-                    default:
-                        Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
-                        break;
-                }
+            switch (option)
+            {
+                case "d":
+                    Console.WriteLine("You have moved to the right.");
+                    this.location.x++;
+                    break;
+                case "a":
+                    Console.WriteLine("You have moved to the left.");
+                    this.location.x--;
+                    break;
+                case "w":
+                    Console.WriteLine("You have moved forward.");
+                    this.location.y++;
+                    break;
+                case "s":
+                    Console.WriteLine("You have moved backward.");
+                    this.location.y--;
+                    break;
+                default:
+                    Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
+                    break;
+            }
         }
         public void TimedText(string inText, int inSpeed = 50, bool clearConsole = false) // This allows for text to be timed, need to make a skippable feature into this as well, and make it print out the text as a whole if so.
         {
@@ -152,12 +188,17 @@ namespace LostBoy
             Story story = new Story();
             player.TimedText(story.introduction, 10, true);
             player.GetName();
-            
-            
+            Map Dungeon = new Map(10, 10, 100); // Testing Map One
+            Enemy enemy = new Enemy(Dungeon); // Testing an enemy within the map.
+            Console.WriteLine(enemy.Health);
+            Console.ReadLine();
+
+
 
         }
     }
 }
+    
 
 public interface ICharacter
 {
