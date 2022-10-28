@@ -20,6 +20,14 @@ namespace LostBoy
 {
 
     struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
+
+    public enum Monster
+    {
+        Troll,
+        Ogre,
+        Demon
+
+    }
                                                                      //    struct Vec2 { public float x; public float y;};
 
 
@@ -65,14 +73,33 @@ namespace LostBoy
     }
 
 
-        public class Enemy : Player
+    public class Enemy : Player
+    {
+        private Monster monster;
+        public Monster Monster
         {
-            public Enemy(Map map)
+            get
             {
-                this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
-                this.Health = ((this.level * RandomNumber(1, 3)) + 100);
+                return monster;
             }
+            set
+            {
+                monster = value;
+            }
+
         }
+
+
+        public Enemy(Map map)
+        {
+            this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
+            this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
+            this.monster = (Monster)RandomNumber(0,2);
+
+                
+        }
+
+    }
     
     public class Player : ICharacter
     {
@@ -119,12 +146,17 @@ namespace LostBoy
         }
 
 
-        public float RandomNumber(float lowerRange, float upperRange)
+        public float RandomFloatNumber(float lowerRange, float upperRange)
         {
             Random random = new Random();
             return (float)random.NextDouble() + random.Next((int)lowerRange, (int)upperRange);
 
 
+        }
+        public int RandomNumber(int lowerRange, int upperRange)
+        {
+            Random random = new Random();
+            return random.Next(lowerRange, upperRange);
         }
         public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
         {
@@ -191,6 +223,7 @@ namespace LostBoy
             Map Dungeon = new Map(10, 10, 100); // Testing Map One
             Enemy enemy = new Enemy(Dungeon); // Testing an enemy within the map.
             Console.WriteLine(enemy.Health);
+            Console.WriteLine(enemy.Monster);
             Console.ReadLine();
 
 
