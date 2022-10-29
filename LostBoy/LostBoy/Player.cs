@@ -18,7 +18,17 @@ public class Player : ICharacter
         get { return health; }
         set { health = value; }
     }
-
+    public string Name
+    {
+        get { return name; }
+    }
+    public Vec3 Location
+    {
+        get
+        {
+            return location;
+        }
+    }
     public Player(string inName)
     {
         this.health = 100;

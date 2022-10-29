@@ -30,13 +30,13 @@ namespace LostBoy
             Console.Clear();
 
             Player player = new Player();
-            Story story = new Story();
-            story.TimedText(story.introduction, 1, true);
+            Story.TimedText(Story.introduction, 1, true);
             player.GetName();
+            Story.afterIntro(player.Name);
             Map Dungeon = new Map(10, 10, 2); // Testing Map One
             Enemy enemy = new Enemy(Dungeon);
             Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
-            Console.WriteLine(Dungeon.enemies[1].Health); // Array of monsters created within the map with proper x y (z)
+            Console.WriteLine(Dungeon.enemies[1].Location.x); // Array of monsters created within the map with proper x y (z)
             Console.WriteLine(enemy.Monster);
             Console.ReadLine();
 

@@ -7,6 +7,7 @@ public class Map
     private int mapDifficulty;
     public Enemy[] enemies = new Enemy[10];
 
+
     public Player.Vec3 MapSize
     {
         get { return mapSize; }
@@ -35,12 +36,14 @@ public class Map
         for (int i = 0; i < map.mapDifficulty; i++)
         {
             Player.Vec3 loc;
+            
             loc.x = Player.RandomNumber(1, (int)map.MapSize.x);  // rand x for monster
             loc.y = Player.RandomNumber(1, (int)map.MapSize.y);  // rand y for monster
             loc.z = MapSize.z; // z can be initialized within the map.
             enemy[i] = new Enemy(map, loc); 
             map.enemies[i] = enemy[i]; // possibly need to do another for loop after this to detect for monsters on duplicate spaces.
-           
+            
+      
 
 
         }
