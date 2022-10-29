@@ -28,13 +28,15 @@ namespace LostBoy
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Clear();
+
             Player player = new Player();
             Story story = new Story();
-            player.TimedText(story.introduction, 10, true);
+            story.TimedText(story.introduction, 1, true);
             player.GetName();
-            Map Dungeon = new Map(10, 10, 100); // Testing Map One
-            Enemy enemy = new Enemy(Dungeon); // Testing an enemy within the map.
-            Console.WriteLine(enemy.Health);
+            Map Dungeon = new Map(10, 10, 2); // Testing Map One
+            Enemy enemy = new Enemy(Dungeon);
+            Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
+            Console.WriteLine(Dungeon.enemies[1].Health); // Array of monsters created within the map with proper x y (z)
             Console.WriteLine(enemy.Monster);
             Console.ReadLine();
 
