@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Security.Cryptography;
 
 public class Map
@@ -41,12 +42,27 @@ public class Map
             loc.y = Player.RandomNumber(1, (int)map.MapSize.y);  // rand y for monster
             loc.z = MapSize.z; // z can be initialized within the map.
             enemy[i] = new Enemy(map, loc); 
-            map.enemies[i] = enemy[i]; // possibly need to do another for loop after this to detect for monsters on duplicate spaces.
-            
-      
+            map.enemies[i] = enemy[i]; // possibly need to do another for loop after this to detect for monsters on duplicate spaces
+
 
 
         }
     }
+
+    public static void FillScreen(char c)
+    {
+        for (int top = 0; top < Console.WindowHeight; top++)
+        {
+            string line = string.Empty;
+            for (int left = 0; left < Console.WindowWidth; left++)
+            {
+                line += c;
+            }
+
+            Console.SetCursorPosition(0, top);
+            Console.Write(line);
+        }
+    }
+
 
 }

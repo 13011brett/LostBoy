@@ -1,5 +1,6 @@
 ﻿using LostBoy;
 using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -31,12 +32,17 @@ namespace LostBoy
 
             Player player = new Player();
             Story.TimedText(Story.introduction, 1, true);
+            Console.ForegroundColor = ConsoleColor.Red;
             player.GetName();
             Story.afterIntro(player.Name);
             Map Dungeon = new Map(10, 10, 2); // Testing Map One
             Enemy enemy = new Enemy(Dungeon);
             Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
-            Console.WriteLine(Dungeon.enemies[1].Location.x); // Array of monsters created within the map with proper x y (z)
+
+            
+            Console.Clear();
+            Map.FillScreen('█');
+
             Console.WriteLine(enemy.Monster);
             Console.ReadLine();
 
