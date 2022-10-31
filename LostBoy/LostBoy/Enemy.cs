@@ -31,6 +31,14 @@ public class Enemy : Player
 
     }
 
+    public float LocationX
+    {
+        get
+        {
+            return location.x;
+        }
+    }
+
     public Enemy(Map map)
     {
 

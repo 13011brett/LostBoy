@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 public class Map
 {
     private Player.Vec3 mapSize;
     private int mapDifficulty;
-    public Enemy[] enemies = new Enemy[10];
+    public List<Enemy> enemies = new List<Enemy>();
 
 
     public Player.Vec3 MapSize
@@ -33,16 +34,14 @@ public class Map
     }
     public void EnemyCreation(Map map) // All enemy creation will be done within the map, currently works off of map difficulty but can be modularized. 
     {
-        Enemy[] enemy = new Enemy[map.mapDifficulty];
+//        Enemy[] enemy = new Enemy[map.mapDifficulty];
         for (int i = 0; i < map.mapDifficulty; i++)
         {
             Player.Vec3 loc;
-            
             loc.x = Player.RandomNumber(1, (int)map.MapSize.x);  // rand x for monster
             loc.y = Player.RandomNumber(1, (int)map.MapSize.y);  // rand y for monster
             loc.z = MapSize.z; // z can be initialized within the map.
-            enemy[i] = new Enemy(map, loc); 
-            map.enemies[i] = enemy[i]; // possibly need to do another for loop after this to detect for monsters on duplicate spaces
+            map.enemies.Add(new Enemy(map,loc)); // possibly need to do another for loop after this to detect for monsters on duplicate spaces
 
 
 
@@ -61,6 +60,17 @@ public class Map
 
             Console.SetCursorPosition(0, top);
             Console.Write(line);
+        }
+    }
+
+    public static void EnemiesToScreen(char c, Map map)
+    {
+        foreach (var enemies in map.enemies)
+        {
+
+                        
+            Console.SetCursorPosition((int)(enemies.Location.x*map.MapSize.x), (int)(enemies.Location.y));
+            Console.Write(c);
         }
     }
 

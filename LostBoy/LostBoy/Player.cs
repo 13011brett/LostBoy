@@ -62,7 +62,8 @@ public class Player : ICharacter
     }
     static public int RandomNumber(int lowerRange, int upperRange)
     {
-        Random random = new Random();
+        
+        Random random = new Random(Guid.NewGuid().GetHashCode());
         return random.Next(lowerRange, upperRange);
     }
     public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
