@@ -35,15 +35,17 @@ namespace LostBoy
             Console.ForegroundColor = ConsoleColor.Red;
             player.GetName();
             Story.afterIntro(player.Name);
-            Map Dungeon = new Map(10, 10, 20); // Testing Map One
+            Map Dungeon = new Map(10, 20, 40); // Testing Map One
             Enemy enemy = new Enemy(Dungeon);
             Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
 
 
             Console.Clear();
-            Map.FillScreen('█');
+            Map.FillBorder('=');
+            //Map.FillScreen('█');
 
             Map.EnemiesToScreen('o', Dungeon);
+            Console.SetCursorPosition((Console.WindowWidth/2), Console.WindowHeight);
 
             Console.ReadLine();
 

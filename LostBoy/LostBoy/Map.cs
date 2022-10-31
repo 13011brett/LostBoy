@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Principal;
 
 public class Map
 {
@@ -63,16 +64,46 @@ public class Map
         }
     }
 
-    public static void EnemiesToScreen(char c, Map map)
+    public static void FillBorder(char c)
+    {
+        for(int i = 0; i < Console.WindowHeight; i++)
+        {
+            if (i == 0)
+            {
+                for(int line = 0; line < Console.WindowWidth; line++)
+                {
+                    Console.SetCursorPosition(line, 0);
+                    Console.Write(c);
+                }   
+            }
+            Console.SetCursorPosition(0, i);
+            Console.Write('|');
+            Console.SetCursorPosition(Console.WindowWidth - 1, i);
+            Console.Write('|');
+        }
+    }
+
+    public static void EnemiesToScreen(char c, Map map) // Currently not working as expected; need to find a way to map it not go out of window bounds.
     {
         foreach (var enemies in map.enemies)
         {
+            int toPosX = (int)enemies.Location.x * (int)map.MapSize.x;
+            int toPosY = (int)enemies.Location.y * (int)map.MapSize.y + 1;
 
-                        
-            Console.SetCursorPosition((int)(enemies.Location.x*map.MapSize.x), (int)(enemies.Location.y));
+            while (toPosX >= Console.WindowWidth)
+            {
+                toPosX -= Console.WindowWidth;
+            }
+            while (toPosY >= Console.WindowHeight) 
+            {
+                toPosY -= Console.WindowHeight;
+            }
+            Console.SetCursorPosition(toPosX, toPosY);
             Console.Write(c);
         }
     }
+
+    
 
 
 }
