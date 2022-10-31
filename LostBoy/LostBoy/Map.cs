@@ -32,6 +32,8 @@ public class Map
         this.mapSize.x = map_x;
         this.mapSize.y = map_y;
         this.mapDifficulty = difficulty;
+
+        Console.SetWindowSize(((int)this.mapSize.x), ((int)this.mapSize.y));
     }
     public void EnemyCreation(Map map) // All enemy creation will be done within the map, currently works off of map difficulty but can be modularized. 
     {
@@ -87,8 +89,10 @@ public class Map
     {
         foreach (var enemies in map.enemies)
         {
-            int toPosX = (int)enemies.Location.x * (int)map.MapSize.x;
-            int toPosY = (int)enemies.Location.y * (int)map.MapSize.y + 1;
+            int toPosX = (int)enemies.Location.x;// * ((int)map.MapSize.x); 
+            int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
+
+            //I have now made it relative to window height and width :))
 
             while (toPosX >= Console.WindowWidth)
             {
@@ -103,7 +107,22 @@ public class Map
         }
     }
 
-    
+    public static void ScreenMovement(Player player, Map map)
+    {
+        Player.Vec3 vec3;
+        vec3.x = (int)((map.MapSize.x));
+        vec3.y = (int)(map.MapSize.y); 
+        vec3.z = map.MapSize.z;
+        player.Location = vec3;
+        Console.SetCursorPosition(((int)vec3.x/2), ((int)Console.WindowHeight));
+        //Simulating moving with W
+        
+
+    }
+
+
+
+
 
 
 }
