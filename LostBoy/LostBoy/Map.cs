@@ -89,20 +89,18 @@ public class Map
     {
         foreach (var enemies in map.enemies)
         {
-            int toPosX = (int)enemies.Location.x;// * ((int)map.MapSize.x); 
-            int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
+            //int toPosX = (int)enemies.Location.x;// * ((int)map.MapSize.x); 
+            //int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
 
             //I have now made it relative to window height and width :))
 
-            while (toPosX >= Console.WindowWidth)
-            {
-                toPosX -= Console.WindowWidth;
-            }
-            while (toPosY >= Console.WindowHeight) 
-            {
-                toPosY -= Console.WindowHeight;
-            }
-            Console.SetCursorPosition(toPosX, toPosY);
+            if (enemies.LocationX == 0) enemies.LocationX += 1;
+            else if (enemies.LocationX == (Console.WindowWidth-1)) enemies.LocationX -= 1;
+
+            if (enemies.LocationY == 0) enemies.LocationY += 1;
+            else if (enemies.LocationY == (Console.WindowHeight - 1)) enemies.LocationY -= 1;
+
+            Console.SetCursorPosition((int)enemies.Location.x, (int)enemies.Location.y);
             Console.Write(c);
         }
     }
@@ -114,7 +112,7 @@ public class Map
         vec3.y = (int)(map.MapSize.y); 
         vec3.z = map.MapSize.z;
         player.Location = vec3;
-        Console.SetCursorPosition(((int)vec3.x/2), ((int)Console.WindowHeight));
+        Console.SetCursorPosition(((int)vec3.x/2), ((int)vec3.y)); // Center screen to initialize, may want to write this into the constructor.
         //Simulating moving with W
         
 
