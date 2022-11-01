@@ -72,7 +72,7 @@ public class Player : ICharacter
         Random random = new Random(Guid.NewGuid().GetHashCode());
         return random.Next(lowerRange, upperRange);
     }
-    public void Movement(string option) // Movement for now, may do something like getting ASYNC KeyState
+    public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.
     {
         switch (option)
         {
@@ -99,14 +99,29 @@ public class Player : ICharacter
     }
     public static void DoMovement(Player p, int key, int amount = 0)
     {
+        Console.SetWindowPosition(0, 0);
         if ((Story.GetAsyncKeyState(key) & 0x8000) == 0x8000) // W key
         {
+            
             Console.SetCursorPosition((int)(p.location.x), ((int)p.location.y));
             Console.Write(" ");
-            if (key == 0x57) p.location.y -= amount;
-            else if (key == 0x53) p.location.y += amount;
-            else if (key == 0x41) p.location.x -= amount;
-            else if (key == 0x44) p.location.x += amount;
+            if ((int)p.location.y != 1)
+            {
+                if (key == 0x57) p.location.y -= amount; // W key
+            }
+        
+            if((int)p.location.y != (Console.WindowHeight-1))
+            {
+                if (key == 0x53) p.location.y += amount; // S key
+            }
+            if ((int)p.location.x != 1)
+            {
+                if (key == 0x41) p.location.x -= amount; // A Key
+            }
+            if((int)p.location.x != (Console.WindowWidth - 2 ))
+            {
+                if (key == 0x44) p.location.x += amount; // D key
+            } 
             Console.SetCursorPosition(((int)p.location.x), ((int)p.location.y));
             Console.Write('x');
 
