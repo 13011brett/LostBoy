@@ -5,7 +5,7 @@ public class Story // Not sure if making a story object is better than instantia
 {
 
     [DllImport("user32.dll")]
-    internal static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
+    public static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
     public static string introduction = "On a moonlit night, unlike any other, you stand outside of a breathtaking castle. You take in the air as you stare at the water that separates the land. " +
         "\"What a beautiful sight! I wonder what this castle was like before it was abandoned..\" You think to yourself. As soon as that thought finishes playing in your mind, a sudden chill " +

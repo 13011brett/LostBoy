@@ -5,8 +5,6 @@ using System;
 public class Player : ICharacter
 {
     public struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
-    [DllImport("user32.dll")]
-    internal static extern ushort GetAsyncKeyState(int vKey);
 
 
     private string name;
@@ -34,6 +32,31 @@ public class Player : ICharacter
         set
         {
             location = value;
+      
+        }
+    }
+    public float LocationY
+    {
+        get
+        {
+            return location.y;
+        }
+        set
+        {
+            location.y = value;
+
+        }
+    }
+    public float LocationX
+    {
+        get
+        {
+            return location.x;
+        }
+        set
+        {
+            location.x = value;
+
         }
     }
     public Player(string inName)

@@ -32,7 +32,8 @@ public class Map
         this.mapSize.x = map_x;
         this.mapSize.y = map_y;
         this.mapDifficulty = difficulty;
-
+        if(this.mapSize.x > (Console.LargestWindowWidth-20)) this.mapSize.x = (Console.LargestWindowWidth-20);
+        if (this.mapSize.y > (Console.LargestWindowHeight-10)) this.mapSize.y = (Console.LargestWindowHeight-10);
         Console.SetWindowSize(((int)this.mapSize.x), ((int)this.mapSize.y));
     }
     public void EnemyCreation(Map map) // All enemy creation will be done within the map, currently works off of map difficulty but can be modularized. 
@@ -108,13 +109,58 @@ public class Map
     public static void ScreenMovement(Player player, Map map)
     {
         Player.Vec3 vec3;
-        vec3.x = (int)((map.MapSize.x));
+        vec3.x = (int)((map.MapSize.x/2));
         vec3.y = (int)(map.MapSize.y); 
         vec3.z = map.MapSize.z;
         player.Location = vec3;
-        Console.SetCursorPosition(((int)vec3.x/2), ((int)vec3.y)); // Center screen to initialize, may want to write this into the constructor.
+        Console.SetCursorPosition(((int)vec3.x/2), ((int)player.LocationY)); // Center screen to initialize, may want to write this into the constructor.
+        do
+        {
+            Console.CursorVisible = false;
+            if ((Story.GetAsyncKeyState(0x57) & 0x8000) == 0x8000) // W key
+            {
+                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
+                Console.Write("  ");
+                player.LocationY -= 1;
+                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
+                Console.Write('x');
+
+                System.Threading.Thread.Sleep(100);
+            }
+            if ((Story.GetAsyncKeyState(0x53) & 0x8000) == 0x8000) // S key
+            {
+                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
+                Console.Write("  ");
+                player.LocationY += 1;
+                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
+                Console.Write('x');
+
+                System.Threading.Thread.Sleep(100);
+            }
+            if ((Story.GetAsyncKeyState(0x41) & 0x8000) == 0x8000) // A Key
+            {
+                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
+                Console.Write("  ");
+                player.LocationX -= 1;
+                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
+                Console.Write('x');
+
+                System.Threading.Thread.Sleep(100);
+            }
+            if ((Story.GetAsyncKeyState(0x44) & 0x8000) == 0x8000) // D Key
+            {
+                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
+                Console.Write("  ");
+                player.LocationX += 1;
+                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
+                Console.Write('x');
+
+                System.Threading.Thread.Sleep(100);
+            }
+        } while (true);
         //Simulating moving with W
-        
+
+
 
     }
 
