@@ -32,30 +32,6 @@ public class Player : ICharacter
         set
         {
             location = value;
-      
-        }
-    }
-    public float LocationY
-    {
-        get
-        {
-            return location.y;
-        }
-        set
-        {
-            location.y = value;
-
-        }
-    }
-    public float LocationX
-    {
-        get
-        {
-            return location.x;
-        }
-        set
-        {
-            location.x = value;
 
         }
     }
@@ -119,6 +95,22 @@ public class Player : ICharacter
             default:
                 Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
                 break;
+        }
+    }
+    public static void DoMovement(Player p, int key, int amount = 0)
+    {
+        if ((Story.GetAsyncKeyState(key) & 0x8000) == 0x8000) // W key
+        {
+            Console.SetCursorPosition((int)(p.location.x), ((int)p.location.y));
+            Console.Write(" ");
+            if (key == 0x57) p.location.y -= amount;
+            else if (key == 0x53) p.location.y += amount;
+            else if (key == 0x41) p.location.x -= amount;
+            else if (key == 0x44) p.location.x += amount;
+            Console.SetCursorPosition(((int)p.location.x), ((int)p.location.y));
+            Console.Write('x');
+
+            System.Threading.Thread.Sleep(100);
         }
     }
 

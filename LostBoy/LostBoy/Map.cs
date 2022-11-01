@@ -38,6 +38,7 @@ public class Map
     }
     public void EnemyCreation(Map map) // All enemy creation will be done within the map, currently works off of map difficulty but can be modularized. 
     {
+
 //        Enemy[] enemy = new Enemy[map.mapDifficulty];
         for (int i = 0; i < map.mapDifficulty; i++)
         {
@@ -46,8 +47,6 @@ public class Map
             loc.y = Player.RandomNumber(1, (int)map.MapSize.y);  // rand y for monster
             loc.z = MapSize.z; // z can be initialized within the map.
             map.enemies.Add(new Enemy(map,loc)); // possibly need to do another for loop after this to detect for monsters on duplicate spaces
-
-
 
         }
     }
@@ -88,6 +87,8 @@ public class Map
 
     public static void EnemiesToScreen(char c, Map map) // Currently not working as expected; need to find a way to map it not go out of window bounds.
     {
+        var currentColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.DarkRed; // Could probably eventually make this the color of the monster :D
         foreach (var enemies in map.enemies)
         {
             //int toPosX = (int)enemies.Location.x;// * ((int)map.MapSize.x); 
@@ -104,7 +105,9 @@ public class Map
             Console.SetCursorPosition((int)enemies.Location.x, (int)enemies.Location.y);
             Console.Write(c);
         }
+        Console.ForegroundColor = currentColor;
     }
+
 
     public static void ScreenMovement(Player player, Map map)
     {
@@ -113,50 +116,23 @@ public class Map
         vec3.y = (int)(map.MapSize.y); 
         vec3.z = map.MapSize.z;
         player.Location = vec3;
-        Console.SetCursorPosition(((int)vec3.x/2), ((int)player.LocationY)); // Center screen to initialize, may want to write this into the constructor.
+        Console.CursorVisible = false;
+        Console.SetCursorPosition(((int)vec3.x/2), ((int)vec3.y)); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
         do
         {
-            Console.CursorVisible = false;
-            if ((Story.GetAsyncKeyState(0x57) & 0x8000) == 0x8000) // W key
+            foreach(var ene in map.enemies)
             {
-                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
-                Console.Write("  ");
-                player.LocationY -= 1;
-                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
-                Console.Write('x');
-
-                System.Threading.Thread.Sleep(100);
+                if(ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
+                {
+                    Console.Write('n');
+                    ene.LocationX = 0;
+                    ene.LocationY = 0;
+                }
             }
-            if ((Story.GetAsyncKeyState(0x53) & 0x8000) == 0x8000) // S key
-            {
-                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
-                Console.Write("  ");
-                player.LocationY += 1;
-                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
-                Console.Write('x');
-
-                System.Threading.Thread.Sleep(100);
-            }
-            if ((Story.GetAsyncKeyState(0x41) & 0x8000) == 0x8000) // A Key
-            {
-                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
-                Console.Write("  ");
-                player.LocationX -= 1;
-                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
-                Console.Write('x');
-
-                System.Threading.Thread.Sleep(100);
-            }
-            if ((Story.GetAsyncKeyState(0x44) & 0x8000) == 0x8000) // D Key
-            {
-                Console.SetCursorPosition((int)(player.LocationX), ((int)player.LocationY));
-                Console.Write("  ");
-                player.LocationX += 1;
-                Console.SetCursorPosition(((int)player.LocationX), ((int)player.LocationY));
-                Console.Write('x');
-
-                System.Threading.Thread.Sleep(100);
-            }
+            Player.DoMovement(player, 0x57, 1);
+            Player.DoMovement(player, 0x53, 1);
+            Player.DoMovement(player, 0x41, 1);
+            Player.DoMovement(player, 0x44, 1);
         } while (true);
         //Simulating moving with W
 
