@@ -15,6 +15,7 @@ public class Player : ICharacter
     public int level = 1;
     private int experience = 0;
     protected char icon;
+    protected ConsoleColor color;
     public float Health
     {
         get { return health; }
@@ -42,6 +43,7 @@ public class Player : ICharacter
         this.damage = 1;
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = inName;
+        this.color = ConsoleColor.Green;
     }
     public Player()
     {
@@ -49,7 +51,9 @@ public class Player : ICharacter
         this.damage = 1;
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
+        this.color = ConsoleColor.Green;
     }
+
     public void GetName()
     {
         do

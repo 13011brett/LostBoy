@@ -82,14 +82,17 @@ public class Enemy : Player
         if(this.monster == Monster.Troll)
         {
             this.icon = 'T';
+            this.color = ConsoleColor.Yellow;
         }
         else if (this.monster == Monster.Ogre)
         {
             this.icon = 'O';
+            this.color = ConsoleColor.Magenta;
         }
         else if(this.monster == Monster.Demon)
         {
             this.icon = 'D';
+            this.color = ConsoleColor.DarkRed;
         }
         else this.icon = 'o';
 
@@ -102,25 +105,13 @@ public class Enemy : Player
         foreach(var enemy in map.enemies)
         {
             if (enemy.Health > 0) {
-                int randDirection = RandomNumber(0, 6);
+                int randDirection = RandomNumber(0, 100);
+                ConsoleColor oldColor = Console.ForegroundColor;
+                Console.ForegroundColor = enemy.color;
 
-                if (randDirection == 0 && (int)enemy.location.x < (Console.WindowHeight-1))
-                {
-                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write(" ");
-                    enemy.location.x++;
-                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write(enemy.icon);
-                }
-                if (randDirection == 1 && (int)enemy.location.x > 1)
-                {
-                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write(" ");
-                    enemy.location.x--;
-                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write(enemy.icon);
-                }
-                if (randDirection == 2 && (int)enemy.location.y < (Console.WindowWidth-1))
+
+
+                if (randDirection == 0 && (int)enemy.location.y < (Console.WindowHeight-1))
                 {
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(" ");
@@ -128,7 +119,7 @@ public class Enemy : Player
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(enemy.icon);
                 }
-                if (randDirection == 3 && (int)enemy.location.y > 1)
+                if (randDirection == 1 && (int)enemy.location.y > 1)
                 {
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(" ");
@@ -136,6 +127,23 @@ public class Enemy : Player
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(enemy.icon);
                 }
+                if (randDirection == 2 && (int)enemy.location.x < (Console.WindowWidth-1))
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.x++;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(enemy.icon);
+                }
+                if (randDirection == 3 && (int)enemy.location.x > 1)
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.x--;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(enemy.icon);
+                }
+                Console.ForegroundColor = oldColor;
             }
         }
     }

@@ -36,7 +36,7 @@ namespace LostBoy
             player.GetName();
             Story.afterIntro(player.Name);
             
-            Map Dungeon = new Map(60, 500, 5); // Testing Map One
+            Map Dungeon = new Map(200, 100, 100); // Testing Map One
             Enemy enemy = new Enemy(Dungeon);
             Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
 

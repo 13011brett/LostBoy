@@ -65,6 +65,20 @@ public class Map
             Console.Write(line);
         }
     }
+    public static void TimeClearScreen(int timer = 0)
+    {
+        for(int top = 0; top < Console.WindowHeight; top++)
+        {
+            string line = string.Empty;
+            for(int left = 0; left < Console.WindowWidth; left++)
+            {
+                Console.SetCursorPosition(left, top);
+                Console.Write(' ');
+                System.Threading.Thread.Sleep(timer);
+
+            }
+        }
+    }
 
     public static void FillBorder(char c)
     {
@@ -110,9 +124,25 @@ public class Map
         Console.ForegroundColor = currentColor;
     }
 
+    public static void AttackSequence(Player player, Map map)
+    {
+        foreach (var ene in map.enemies)
+        {
+            if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
+            {
+                Map.TimeClearScreen(0);
+                ene.Health = 0;
+                Console.Write('n');
+                ene.LocationX = 0;
+                ene.LocationY = 0;
+            }
+        }
+
+    }
 
 
-    public static void ScreenMovement(Player player, Map map)
+
+    public static void ScreenMovement(Player player, Map map) // This is the main gameplay walking loop at this point. It holds the WASD movement and also monster movement.
     {
         Player.Vec3 vec3;
         vec3.x = (int)((map.MapSize.x/2));
@@ -123,16 +153,8 @@ public class Map
         Console.SetCursorPosition(((int)vec3.x/2), ((int)vec3.y)); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
         do
         {
-            foreach(var ene in map.enemies)
-            {
-                if(ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
-                {
-                    ene.Health = 0;
-                    Console.Write('n');
-                    ene.LocationX = 0;
-                    ene.LocationY = 0;
-                }
-            }
+            AttackSequence(player, map);
+            Enemy.Movement(map);
             Player.DoMovement(player, map, 0x57, 1);
             Player.DoMovement(player, map, 0x53, 1);
             Player.DoMovement(player, map, 0x41, 1);
