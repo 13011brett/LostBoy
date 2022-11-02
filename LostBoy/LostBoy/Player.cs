@@ -97,7 +97,7 @@ public class Player : ICharacter
                 break;
         }
     }
-    public static void DoMovement(Player p, int key, int amount = 0)
+    public static void DoMovement(Player p, Map map, int key, int amount = 0)
     {
         Console.SetWindowPosition(0, 0);
         if ((Story.GetAsyncKeyState(key) & 0x8000) == 0x8000) // W key
@@ -107,25 +107,41 @@ public class Player : ICharacter
             Console.Write(" ");
             if ((int)p.location.y != 1)
             {
-                if (key == 0x57) p.location.y -= amount; // W key
+                if (key == 0x57)
+                {
+                    p.location.y -= amount; // W key
+                    Enemy.Movement(map);
+                }
             }
         
             if((int)p.location.y != (Console.WindowHeight-1))
             {
-                if (key == 0x53) p.location.y += amount; // S key
+                if (key == 0x53)
+                {
+                    p.location.y += amount; // S key
+                    Enemy.Movement(map);
+                }
             }
             if ((int)p.location.x != 1)
             {
-                if (key == 0x41) p.location.x -= amount; // A Key
+                if (key == 0x41)
+                {
+                    p.location.x -= amount; // A Key
+                    Enemy.Movement(map);
+                }
             }
             if((int)p.location.x != (Console.WindowWidth - 2 ))
             {
-                if (key == 0x44) p.location.x += amount; // D key
+                if (key == 0x44)
+                {
+                    p.location.x += amount; // D key
+                    Enemy.Movement(map);
+                }
             } 
             Console.SetCursorPosition(((int)p.location.x), ((int)p.location.y));
             Console.Write('x');
 
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(50);
         }
     }
 

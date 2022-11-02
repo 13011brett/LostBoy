@@ -95,18 +95,21 @@ public class Map
             //int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
 
             //I have now made it relative to window height and width :))
+            if (enemies.Health != 0)
+            {
+                if (enemies.LocationX == 0) enemies.LocationX += 1;
+                else if (enemies.LocationX == (Console.WindowWidth - 1)) enemies.LocationX -= 1;
 
-            if (enemies.LocationX == 0) enemies.LocationX += 1;
-            else if (enemies.LocationX == (Console.WindowWidth-1)) enemies.LocationX -= 1;
+                if (enemies.LocationY == 0) enemies.LocationY += 1;
+                else if (enemies.LocationY == (Console.WindowHeight - 1)) enemies.LocationY -= 1;
 
-            if (enemies.LocationY == 0) enemies.LocationY += 1;
-            else if (enemies.LocationY == (Console.WindowHeight - 1)) enemies.LocationY -= 1;
-
-            Console.SetCursorPosition((int)enemies.Location.x, (int)enemies.Location.y);
-            Console.Write(c);
+                Console.SetCursorPosition((int)enemies.Location.x, (int)enemies.Location.y);
+                Console.Write(c);
+            }
         }
         Console.ForegroundColor = currentColor;
     }
+
 
 
     public static void ScreenMovement(Player player, Map map)
@@ -124,15 +127,20 @@ public class Map
             {
                 if(ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
                 {
+                    ene.Health = 0;
                     Console.Write('n');
                     ene.LocationX = 0;
                     ene.LocationY = 0;
                 }
             }
-            Player.DoMovement(player, 0x57, 1);
-            Player.DoMovement(player, 0x53, 1);
-            Player.DoMovement(player, 0x41, 1);
-            Player.DoMovement(player, 0x44, 1);
+            Player.DoMovement(player, map, 0x57, 1);
+            Player.DoMovement(player, map, 0x53, 1);
+            Player.DoMovement(player, map, 0x41, 1);
+            Player.DoMovement(player, map, 0x44, 1);
+            if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
+            {
+                break;
+            }
         } while (true);
         //Simulating moving with W
 

@@ -74,5 +74,48 @@ public class Enemy : Player
 
     }
 
+    public static void Movement(Map map)
+    {
+        foreach(var enemy in map.enemies)
+        {
+            if (enemy.Health > 0) {
+                int randDirection = RandomNumber(0, 300);
+
+                if (randDirection == 0 && (int)enemy.location.x < Console.WindowHeight)
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.x++;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write("o");
+                }
+                if (randDirection == 1 && (int)enemy.location.x > 1)
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.x--;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write("o");
+                }
+                if (randDirection == 2 && (int)enemy.location.y < Console.WindowWidth)
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.y++;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write("o");
+                }
+                if (randDirection == 3 && (int)enemy.location.y > 1)
+                {
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write(" ");
+                    enemy.location.y--;
+                    Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
+                    Console.Write("o");
+                }
+            }
+        }
+    }
+
 }
 

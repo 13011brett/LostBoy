@@ -36,7 +36,7 @@ namespace LostBoy
             player.GetName();
             Story.afterIntro(player.Name);
             
-            Map Dungeon = new Map(20, 500, 40); // Testing Map One
+            Map Dungeon = new Map(60, 500, 5); // Testing Map One
             Enemy enemy = new Enemy(Dungeon);
             Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
 
@@ -47,6 +47,10 @@ namespace LostBoy
 
             Map.EnemiesToScreen('o', Dungeon);
             Map.ScreenMovement(player, Dungeon); // Need to rename function, this is the main gameplay loop.
+            Console.Clear();
+            Console.ReadLine();
+            Map.EnemiesToScreen('o', Dungeon);
+            Map.ScreenMovement(player, Dungeon);
             //Console.SetCursorPosition((Console.WindowWidth/2), (Console.WindowHeight-5));
 
 
