@@ -104,7 +104,7 @@ public class Map
                 else if (enemies.LocationY == (Console.WindowHeight - 1)) enemies.LocationY -= 1;
 
                 Console.SetCursorPosition((int)enemies.Location.x, (int)enemies.Location.y);
-                Console.Write(c);
+                Console.Write(enemies.Icon);
             }
         }
         Console.ForegroundColor = currentColor;

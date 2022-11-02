@@ -17,6 +17,7 @@ public enum Monster
 public class Enemy : Player
 {
     private Monster monster;
+    
 
     public Monster Monster
     {
@@ -53,6 +54,13 @@ public class Enemy : Player
             location.y = value;
         }
     }
+    public char Icon
+    {
+        get
+        {
+            return icon;
+        }
+    }
 
     public Enemy(Map map)
     {
@@ -60,6 +68,7 @@ public class Enemy : Player
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
         this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
         this.monster = (Monster)RandomNumber(0, 2);
+        this.icon = (char)this.monster;
 
 
     }
@@ -68,8 +77,22 @@ public class Enemy : Player
 
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
         this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
-        this.monster = (Monster)RandomNumber(0, 2);
+        this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;
+        if(this.monster == Monster.Troll)
+        {
+            this.icon = 'T';
+        }
+        else if (this.monster == Monster.Ogre)
+        {
+            this.icon = 'O';
+        }
+        else if(this.monster == Monster.Demon)
+        {
+            this.icon = 'D';
+        }
+        else this.icon = 'o';
+
 
 
     }
@@ -79,15 +102,15 @@ public class Enemy : Player
         foreach(var enemy in map.enemies)
         {
             if (enemy.Health > 0) {
-                int randDirection = RandomNumber(0, 300);
+                int randDirection = RandomNumber(0, 6);
 
-                if (randDirection == 0 && (int)enemy.location.x < Console.WindowHeight)
+                if (randDirection == 0 && (int)enemy.location.x < (Console.WindowHeight-1))
                 {
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(" ");
                     enemy.location.x++;
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write("o");
+                    Console.Write(enemy.icon);
                 }
                 if (randDirection == 1 && (int)enemy.location.x > 1)
                 {
@@ -95,15 +118,15 @@ public class Enemy : Player
                     Console.Write(" ");
                     enemy.location.x--;
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write("o");
+                    Console.Write(enemy.icon);
                 }
-                if (randDirection == 2 && (int)enemy.location.y < Console.WindowWidth)
+                if (randDirection == 2 && (int)enemy.location.y < (Console.WindowWidth-1))
                 {
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(" ");
                     enemy.location.y++;
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write("o");
+                    Console.Write(enemy.icon);
                 }
                 if (randDirection == 3 && (int)enemy.location.y > 1)
                 {
@@ -111,7 +134,7 @@ public class Enemy : Player
                     Console.Write(" ");
                     enemy.location.y--;
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
-                    Console.Write("o");
+                    Console.Write(enemy.icon);
                 }
             }
         }

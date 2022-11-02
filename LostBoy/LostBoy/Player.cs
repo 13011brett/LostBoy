@@ -14,6 +14,7 @@ public class Player : ICharacter
     private bool bMoving;
     public int level = 1;
     private int experience = 0;
+    protected char icon;
     public float Health
     {
         get { return health; }
@@ -72,31 +73,7 @@ public class Player : ICharacter
         Random random = new Random(Guid.NewGuid().GetHashCode());
         return random.Next(lowerRange, upperRange);
     }
-    public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.
-    {
-        switch (option)
-        {
-            case "d":
-                Console.WriteLine("You have moved to the right.");
-                this.location.x++;
-                break;
-            case "a":
-                Console.WriteLine("You have moved to the left.");
-                this.location.x--;
-                break;
-            case "w":
-                Console.WriteLine("You have moved forward.");
-                this.location.y++;
-                break;
-            case "s":
-                Console.WriteLine("You have moved backward.");
-                this.location.y--;
-                break;
-            default:
-                Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
-                break;
-        }
-    }
+
     public static void DoMovement(Player p, Map map, int key, int amount = 0)
     {
         Console.SetWindowPosition(0, 0);
@@ -145,6 +122,31 @@ public class Player : ICharacter
         }
     }
 
+    public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.
+    {
+        switch (option)
+        {
+            case "d":
+                Console.WriteLine("You have moved to the right.");
+                this.location.x++;
+                break;
+            case "a":
+                Console.WriteLine("You have moved to the left.");
+                this.location.x--;
+                break;
+            case "w":
+                Console.WriteLine("You have moved forward.");
+                this.location.y++;
+                break;
+            case "s":
+                Console.WriteLine("You have moved backward.");
+                this.location.y--;
+                break;
+            default:
+                Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
+                break;
+        }
+    }
 
 
 
