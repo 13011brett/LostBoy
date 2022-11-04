@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Story.cs" />
     <Compile Include="Map.cs" />

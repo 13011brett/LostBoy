@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System;
-
+using System.Runtime.CompilerServices;
 
 public class Player : ICharacter
 {
@@ -14,7 +14,7 @@ public class Player : ICharacter
     private bool bMoving;
     public int level = 1;
     private int experience = 0;
-    protected char icon;
+    protected char icon = 'p';
     protected ConsoleColor color;
     public float Health
     {
@@ -120,7 +120,7 @@ public class Player : ICharacter
                 }
             } 
             Console.SetCursorPosition(((int)p.location.x), ((int)p.location.y));
-            Console.Write('x');
+            Console.Write(p.icon);
 
             System.Threading.Thread.Sleep(50);
         }
