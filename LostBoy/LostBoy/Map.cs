@@ -9,6 +9,8 @@ public class Map
     private Player.Vec3 mapSize;
     private int mapDifficulty;
     public List<Enemy> enemies = new List<Enemy>();
+    public static char Border { get; protected set; }
+    
 
 
     public Player.Vec3 MapSize
@@ -52,7 +54,7 @@ public class Map
     }
 
     public static void FillScreen(char c)
-    {
+    { 
         for (int top = 0; top < Console.WindowHeight; top++)
         {
             string line = string.Empty;
@@ -82,6 +84,7 @@ public class Map
 
     public static void FillBorder(char c)
     {
+        Map.Border = c;
         for(int i = 0; i < Console.WindowHeight; i++)
         {
             if (i == 0)
@@ -135,14 +138,30 @@ public class Map
                 Map.TimeClearScreen(0);
                 Console.SetCursorPosition(0, 0);
                 Console.SetWindowSize(200, 60);
-                player.Health -= ene.damage;
-                ene.Health -= player.damage;
-                Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n");
-                if (player.Health <= 0) Console.Write("Game Over.");
-                Console.ReadLine();
+                Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
+
+                do
+                {
+
+                    if (Story.GetKey(0x4B, 5))
+                    {
+                        Console.Clear();
+                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
+                        if (player.Health <= 0) Console.Write("Game Over.");
+                        player.Health -= ene.damage;
+                        ene.Health -= player.damage;
+                       // System.Threading.Thread.Sleep(10);
+
+
+                    }
+                    if(Story.GetKey(0x52, 0))
+                    {
+                        break;
+                    }
+                } while (player.Health > 0 || ene.Health > 0);
                 Console.Clear();
                 Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
-                Map.FillBorder('=');
+                Map.FillBorder(Map.Border);
                 
                 player.ResetLocation(ref map);
                 
