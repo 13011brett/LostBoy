@@ -67,6 +67,8 @@ public class Enemy : Player
 
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
         this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
+        this.damage = 100;
+        this.Armor = (.05f * map.MapDifficulty);
         this.monster = (Monster)RandomNumber(0, 2);
         this.icon = (char)this.monster;
 

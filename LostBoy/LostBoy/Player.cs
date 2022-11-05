@@ -9,11 +9,12 @@ public class Player : ICharacter
 
     private string name;
     private float health;
-    private float damage;
+    public float Armor { get; protected set; }
+    public float damage { get; protected set; }
     protected Vec3 location;
     private bool bMoving;
     public int level = 1;
-    private int experience = 0;
+    public int Experience { get; protected set; }
     protected char icon = 'p';
     protected ConsoleColor color;
     public float Health
@@ -40,7 +41,8 @@ public class Player : ICharacter
     public Player(string inName)
     {
         this.health = 100;
-        this.damage = 1;
+        this.damage = level*(RandomNumber(level, level+3));
+        this.Experience = 0;
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = inName;
         this.color = ConsoleColor.Green;
@@ -124,6 +126,14 @@ public class Player : ICharacter
 
             System.Threading.Thread.Sleep(50);
         }
+    }
+    public void ResetLocation(ref Map map)
+    {
+        this.location.x = (int)((map.MapSize.x / 2));
+        this.location.y = (int)(map.MapSize.y);
+        this.location.z = map.MapSize.z;
+        Console.CursorVisible = false;
+        Console.SetCursorPosition(((int)this.location.x / 2), ((int)this.location.y));
     }
 
     public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.

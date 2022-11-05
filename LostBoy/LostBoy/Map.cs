@@ -109,7 +109,7 @@ public class Map
             //int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
 
             //I have now made it relative to window height and width :))
-            if (enemies.Health != 0)
+            if (enemies.Health >= 0)
             {
                 if (enemies.LocationX == 0) enemies.LocationX += 1;
                 else if (enemies.LocationX == (Console.WindowWidth - 1)) enemies.LocationX -= 1;
@@ -130,11 +130,22 @@ public class Map
         {
             if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
             {
+
+                
                 Map.TimeClearScreen(0);
-                ene.Health = 0;
-                Console.Write('n');
-                ene.LocationX = 0;
-                ene.LocationY = 0;
+                Console.SetCursorPosition(0, 0);
+                Console.SetWindowSize(200, 60);
+                player.Health -= ene.damage;
+                ene.Health -= player.damage;
+                Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n");
+                if (player.Health <= 0) Console.Write("Game Over.");
+                Console.ReadLine();
+                Console.Clear();
+                Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
+                Map.FillBorder('=');
+                
+                player.ResetLocation(ref map);
+                
             }
         }
 
