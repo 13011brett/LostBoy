@@ -48,14 +48,12 @@ public class Story // Not sure if making a story object is better than instantia
         }
     }
 
-    public static bool GetKey(int Key, int timer)
+    public static void GetKey(int Key, int timer)
     {
         if ((GetAsyncKeyState(Key) & 0x8000) == 0x8000)
         {
             System.Threading.Thread.Sleep(timer);
-            return true;
         }
-        return false;
     }
 
 }

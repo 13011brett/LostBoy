@@ -46,14 +46,15 @@ public class Player : ICharacter
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = inName;
         this.color = ConsoleColor.Green;
+        this.level = 2;
     }
     public Player()
     {
         this.health = 100;
-        this.damage = 1;
+        this.damage = level * (RandomNumber(level, level + 3));
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
-        this.color = ConsoleColor.Green;
+        this.color = ConsoleColor.Blue;
     }
 
     public void GetName()

@@ -131,7 +131,7 @@ public class Map
     {
         foreach (var ene in map.enemies)
         {
-            if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y)
+            if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y && ene.Health > 0)
             {
 
                 
@@ -143,22 +143,23 @@ public class Map
                 do
                 {
 
-                    if (Story.GetKey(0x4B, 5))
+                    if ((Story.GetAsyncKeyState(0x4B) & 0x8000) == 0x8000)
                     {
                         Console.Clear();
-                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
                         if (player.Health <= 0) Console.Write("Game Over.");
                         player.Health -= ene.damage;
-                        ene.Health -= player.damage;
-                       // System.Threading.Thread.Sleep(10);
+                        ene.Health -= 100;
+                        if (ene.Health <= 0) break;
+                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
+                        //System.Threading.Thread.Sleep(10);
 
 
                     }
-                    if(Story.GetKey(0x52, 0))
+                    if ((Story.GetAsyncKeyState(0x52) & 0x8000) == 0x8000)
                     {
                         break;
                     }
-                } while (player.Health > 0 || ene.Health > 0);
+                } while (player.Health >= 0);
                 Console.Clear();
                 Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
                 Map.FillBorder(Map.Border);
