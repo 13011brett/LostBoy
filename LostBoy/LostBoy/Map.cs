@@ -151,7 +151,7 @@ public class Map : Player
                         if (player.Health <= 0) Console.Write("Game Over.");
                         Player.Damage(ref player, ene);
                         if (ene.Health <= 0) break;
-                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience);
+                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience + "/" + player.ExperienceRequired + "\nCurrent Level = " + player.level);
                         System.Threading.Thread.Sleep(10);
 
 

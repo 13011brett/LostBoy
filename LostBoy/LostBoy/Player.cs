@@ -10,6 +10,7 @@ public class Player : ICharacter
     private string name;
     public float Health { get; protected set; }
     public float Armor { get; protected set; }
+    public int ExperienceRequired { get; protected set; }
     public float damage { get; protected set; }
     protected Vec3 location;
     private bool bMoving;
@@ -38,7 +39,7 @@ public class Player : ICharacter
 
         }
     }
-    public Player(string inName)
+/*    public Player(string inName)
     {
         this.Health = 100;
         this.damage = level*(RandomNumber(level, level+3));
@@ -47,7 +48,7 @@ public class Player : ICharacter
         this.name = inName;
         this.color = ConsoleColor.Green;
         this.level = 2;
-    }
+    }*/
     public Player()
     {
         this.Health = 10000;
@@ -55,6 +56,7 @@ public class Player : ICharacter
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
         this.color = ConsoleColor.Blue;
+        this.ExperienceRequired = ((this.level * this.level) * 100);
     }
 
     public void GetName()
@@ -140,7 +142,22 @@ public class Player : ICharacter
         if(enemy.Health <= 0)
         {
             player.Experience += enemy.Experience;
+            GetLevel(player);
         }
+    }
+
+
+
+    public static void GetLevel(Player player)
+    {
+
+        while(player.Experience >= player.ExperienceRequired)
+        {
+            player.Experience -= player.ExperienceRequired;
+            player.level++;
+            player.ExperienceRequired = ((player.level * player.level) * 100);
+        }
+
     }
 
     public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.
