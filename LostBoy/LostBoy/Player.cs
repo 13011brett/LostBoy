@@ -50,8 +50,8 @@ public class Player : ICharacter
     }
     public Player()
     {
-        this.Health = 100;
-        this.damage = level * (RandomNumber(level, level + 3));
+        this.Health = 10000;
+        this.damage = level * (RandomNumber(level, level + 50));
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
         this.color = ConsoleColor.Blue;
@@ -81,46 +81,38 @@ public class Player : ICharacter
         return random.Next(lowerRange, upperRange);
     }
 
-    public static void DoMovement(Player p, Map map, int key, int amount = 0)
+    public static void DoMovement(Player p, Map map, int amount = 0)
     {
         Console.SetWindowPosition(0, 0);
-        if ((Story.GetAsyncKeyState(key) & 0x8000) == 0x8000) // W key
+        if (Story.GetKey(0x57) || Story.GetKey(0x53) || Story.GetKey(0x41) || Story.GetKey(0x44))
         {
             
             Console.SetCursorPosition((int)(p.location.x), ((int)p.location.y));
             Console.Write(" ");
-            if ((int)p.location.y != 1)
+            if ((int)p.location.y != 1 && (Story.GetAsyncKeyState(0x57) & 0x8000) == 0x8000)
             {
-                if (key == 0x57)
-                {
-                    p.location.y -= amount; // W key
-                    Enemy.Movement(map);
-                }
+                p.location.y -= amount; // W key
+                Enemy.Movement(map);
             }
         
-            if((int)p.location.y != (Console.WindowHeight-1))
+            if((int)p.location.y != (Console.WindowHeight-1) && (Story.GetAsyncKeyState(0x53) & 0x8000) == 0x8000)
             {
-                if (key == 0x53)
-                {
-                    p.location.y += amount; // S key
-                    Enemy.Movement(map);
-                }
+
+                p.location.y += amount; // S key
+                Enemy.Movement(map);
+                
             }
-            if ((int)p.location.x != 1)
+            if ((int)p.location.x != 1 && (Story.GetAsyncKeyState(0x41) & 0x8000) == 0x8000)
             {
-                if (key == 0x41)
-                {
-                    p.location.x -= amount; // A Key
-                    Enemy.Movement(map);
-                }
+                 p.location.x -= amount; // A Key
+                 Enemy.Movement(map);
+                
             }
-            if((int)p.location.x != (Console.WindowWidth - 2))
-            {
-                if (key == 0x44)
-                {
-                    p.location.x += amount; // D key
-                    Enemy.Movement(map);
-                }
+            if((int)p.location.x != (Console.WindowWidth - 2) && (Story.GetAsyncKeyState(0x44) & 0x8000) == 0x8000)
+            {   
+                p.location.x += amount; // D key
+                Enemy.Movement(map);
+                
             } 
             Console.SetCursorPosition(((int)p.location.x), ((int)p.location.y));
             Console.Write(p.icon);
@@ -131,7 +123,7 @@ public class Player : ICharacter
     public void ResetLocation(ref Map map)
     {
         this.location.x = (int)((map.MapSize.x / 2));
-        this.location.y = (int)(map.MapSize.y);
+        this.location.y = (int)(map.MapSize.y-1);
         this.location.z = map.MapSize.z;
         Console.CursorVisible = false;
         Console.SetCursorPosition(((int)this.location.x / 2), ((int)this.location.y));
@@ -141,6 +133,14 @@ public class Player : ICharacter
     {
         attacker.Health -= attackee.damage;
         attackee.Health -= attacker.damage;
+    }
+
+    public static void GainExperience(Player player, Player enemy)
+    {
+        if(enemy.Health <= 0)
+        {
+            player.Experience += enemy.Experience;
+        }
     }
 
     public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.

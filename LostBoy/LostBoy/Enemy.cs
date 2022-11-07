@@ -66,11 +66,12 @@ public class Enemy : Player
     {
 
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
-        this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
+        this.Health = ((this.level * RandomFloatNumber(1, map.MapDifficulty)) + 100);
         this.damage = 100;
         this.Armor = (.05f * map.MapDifficulty);
         this.monster = (Monster)RandomNumber(0, 2);
         this.icon = (char)this.monster;
+        this.Experience = ((int)this.level *map.MapDifficulty);
 
 
     }
@@ -81,7 +82,8 @@ public class Enemy : Player
         this.Health = ((this.level * RandomFloatNumber(1, 10)) + 100);
         this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;
-        if(this.monster == Monster.Troll)
+        this.Experience = (((int)this.level * map.MapDifficulty)+RandomNumber(0,map.MapDifficulty));
+        if (this.monster == Monster.Troll)
         {
             this.icon = 'T';
             this.color = ConsoleColor.Yellow;
@@ -107,7 +109,7 @@ public class Enemy : Player
         foreach(var enemy in map.enemies)
         {
             if (enemy.Health > 0) {
-                int randDirection = RandomNumber(0, 100);
+                int randDirection = RandomNumber(0, 1000);
                 ConsoleColor oldColor = Console.ForegroundColor;
                 Console.ForegroundColor = enemy.color;
 

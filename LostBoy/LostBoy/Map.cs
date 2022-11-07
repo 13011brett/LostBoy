@@ -75,11 +75,13 @@ public class Map : Player
             for(int left = 0; left < Console.WindowWidth; left++)
             {
                 Console.SetCursorPosition(left, top);
-                Console.Write(' ');
+                Console.Write('-');
                 System.Threading.Thread.Sleep(timer);
 
             }
+           
         }
+        Console.Clear();
     }
 
     public static void FillBorder(char c)
@@ -149,8 +151,8 @@ public class Map : Player
                         if (player.Health <= 0) Console.Write("Game Over.");
                         Player.Damage(ref player, ene);
                         if (ene.Health <= 0) break;
-                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
-                        //System.Threading.Thread.Sleep(10);
+                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience);
+                        System.Threading.Thread.Sleep(10);
 
 
                     }
@@ -159,6 +161,7 @@ public class Map : Player
                         break;
                     }
                 } while (player.Health >= 0);
+                GainExperience(player, ene);
                 Console.Clear();
                 Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
                 Map.FillBorder(Map.Border);               
@@ -175,19 +178,16 @@ public class Map : Player
     {
         Player.Vec3 vec3;
         vec3.x = (int)((map.MapSize.x/2));
-        vec3.y = (int)(map.MapSize.y); 
+        vec3.y = (int)(map.MapSize.y-1); 
         vec3.z = map.MapSize.z;
         player.Location = vec3;
         Console.CursorVisible = false;
-        Console.SetCursorPosition(((int)vec3.x/2), ((int)vec3.y)); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
+        Console.SetCursorPosition(((int)vec3.x/2), ((int)(vec3.y))); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
         do
         {
             AttackSequence(player, map);
             Enemy.Movement(map);
-            Player.DoMovement(player, map, 0x57, 1);
-            Player.DoMovement(player, map, 0x53, 1);
-            Player.DoMovement(player, map, 0x41, 1);
-            Player.DoMovement(player, map, 0x44, 1);
+            Player.DoMovement(player, map, 1);
             if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
             {
                 break;

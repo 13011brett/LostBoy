@@ -7,6 +7,8 @@ public class Story // Not sure if making a story object is better than instantia
     [DllImport("user32.dll")]
     public static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
+
+
     public static string introduction = "On a moonlit night, unlike any other, you stand outside of a breathtaking castle. You take in the air as you stare at the water that separates the land. " +
         "\"What a beautiful sight! I wonder what this castle was like before it was abandoned..\" You think to yourself. As soon as that thought finishes playing in your mind, a sudden chill " +
         "goes throughout your body, completely freezing you to a a halt. People pass by you as you stand there in shock, not able to move a muscle, other than your eyes. Your attention is quickly " +
@@ -48,12 +50,10 @@ public class Story // Not sure if making a story object is better than instantia
         }
     }
 
-    public static void GetKey(int Key, int timer)
+    public static bool GetKey(int Key, int timer = 0)
     {
-        if ((GetAsyncKeyState(Key) & 0x8000) == 0x8000)
-        {
-            System.Threading.Thread.Sleep(timer);
-        }
+        if ((GetAsyncKeyState(Key) & 0x8000) == 0x8000) return true;
+        return false;
     }
 
 }
