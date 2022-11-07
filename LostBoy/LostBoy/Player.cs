@@ -8,7 +8,7 @@ public class Player : ICharacter
 
 
     private string name;
-    private float health;
+    public float Health { get; protected set; }
     public float Armor { get; protected set; }
     public float damage { get; protected set; }
     protected Vec3 location;
@@ -17,11 +17,11 @@ public class Player : ICharacter
     public int Experience { get; protected set; }
     protected char icon = 'p';
     protected ConsoleColor color;
-    public float Health
-    {
-        get { return health; }
-        set { health = value; }
-    }
+    //public float Health
+    //{
+    //    get { return health; }
+    //    set { health = value; }
+    //}
     public string Name
     {
         get { return name; }
@@ -40,7 +40,7 @@ public class Player : ICharacter
     }
     public Player(string inName)
     {
-        this.health = 100;
+        this.Health = 100;
         this.damage = level*(RandomNumber(level, level+3));
         this.Experience = 0;
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
@@ -50,7 +50,7 @@ public class Player : ICharacter
     }
     public Player()
     {
-        this.health = 100;
+        this.Health = 100;
         this.damage = level * (RandomNumber(level, level + 3));
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
@@ -69,7 +69,7 @@ public class Player : ICharacter
 
     public float RandomFloatNumber(float lowerRange, float upperRange)
     {
-        Random random = new Random();
+        Random random = new Random(Guid.NewGuid().GetHashCode());
         return (float)random.NextDouble() + random.Next((int)lowerRange, (int)upperRange);
 
 
@@ -114,7 +114,7 @@ public class Player : ICharacter
                     Enemy.Movement(map);
                 }
             }
-            if((int)p.location.x != (Console.WindowWidth - 2 ))
+            if((int)p.location.x != (Console.WindowWidth - 2))
             {
                 if (key == 0x44)
                 {
@@ -135,6 +135,12 @@ public class Player : ICharacter
         this.location.z = map.MapSize.z;
         Console.CursorVisible = false;
         Console.SetCursorPosition(((int)this.location.x / 2), ((int)this.location.y));
+    }
+
+    public static void Damage(ref Player attacker, Player attackee)
+    {
+        attacker.Health -= attackee.damage;
+        attackee.Health -= attacker.damage;
     }
 
     public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.

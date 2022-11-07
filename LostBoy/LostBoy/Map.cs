@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Principal;
 
-public class Map
+public class Map : Player
 {
     private Player.Vec3 mapSize;
     private int mapDifficulty;
@@ -102,7 +102,7 @@ public class Map
         }
     }
 
-    public static void EnemiesToScreen(char c, Map map) // Currently not working as expected; need to find a way to map it not go out of window bounds.
+    public static void EnemiesToScreen(Map map) // Currently not working as expected; need to find a way to map it not go out of window bounds.
     {
         var currentColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.DarkRed; // Could probably eventually make this the color of the monster :D
@@ -147,8 +147,7 @@ public class Map
                     {
                         Console.Clear();
                         if (player.Health <= 0) Console.Write("Game Over.");
-                        player.Health -= ene.damage;
-                        ene.Health -= 100;
+                        Player.Damage(ref player, ene);
                         if (ene.Health <= 0) break;
                         Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
                         //System.Threading.Thread.Sleep(10);
@@ -162,10 +161,9 @@ public class Map
                 } while (player.Health >= 0);
                 Console.Clear();
                 Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
-                Map.FillBorder(Map.Border);
-                
+                Map.FillBorder(Map.Border);               
                 player.ResetLocation(ref map);
-                
+                Map.EnemiesToScreen(map);
             }
         }
 

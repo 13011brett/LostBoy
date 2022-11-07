@@ -45,11 +45,11 @@ namespace LostBoy
             Map.FillBorder('=');
             //Map.FillScreen('█');
 
-            Map.EnemiesToScreen('o', Dungeon);
+            Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon); // Need to rename function, this is the main gameplay loop.
             Console.Clear();
             Console.ReadLine();
-            Map.EnemiesToScreen('o', Dungeon);
+            Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon);
             //Console.SetCursorPosition((Console.WindowWidth/2), (Console.WindowHeight-5));
 

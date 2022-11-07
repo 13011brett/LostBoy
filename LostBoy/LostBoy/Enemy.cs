@@ -78,7 +78,7 @@ public class Enemy : Player
     {
 
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
-        this.Health = ((this.level * RandomFloatNumber(1, 3)) + 100);
+        this.Health = ((this.level * RandomFloatNumber(1, 10)) + 100);
         this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;
         if(this.monster == Monster.Troll)
@@ -129,7 +129,7 @@ public class Enemy : Player
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(enemy.icon);
                 }
-                if (randDirection == 2 && (int)enemy.location.x < (Console.WindowWidth-1))
+                if (randDirection == 2 && (int)enemy.location.x < (Console.WindowWidth-2))
                 {
                     Console.SetCursorPosition((int)(enemy.location.x), ((int)enemy.location.y));
                     Console.Write(" ");
