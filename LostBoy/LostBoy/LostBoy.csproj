@@ -58,6 +58,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Items\Armor.cs" />
+    <Compile Include="Items\Consumables.cs" />
+    <Compile Include="Items\Inventory.cs" />
+    <Compile Include="Items\ItemType.cs" />
+    <Compile Include="Items\ObtainableItem.cs" />
+    <Compile Include="Items\Stats.cs" />
+    <Compile Include="Items\Weapon.cs" />
     <Compile Include="Ogre.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Interfaces.cs" />

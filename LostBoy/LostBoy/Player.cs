@@ -1,8 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using System;
 using System.Runtime.CompilerServices;
+using LostBoy.Items;
 
-public class Player : ICharacter
+public class Player : Stats,ICharacter
 {
     public struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
 
