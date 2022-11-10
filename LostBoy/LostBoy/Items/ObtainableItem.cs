@@ -20,7 +20,7 @@ namespace LostBoy.Items
             
         public ObtainableItem()
         {
-            this.stats.Health = 100;
+            //this.stats.Health = 100;
             this.ID = new Guid();
         }
     }

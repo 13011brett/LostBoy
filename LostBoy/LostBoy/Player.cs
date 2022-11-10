@@ -3,12 +3,13 @@ using System;
 using System.Runtime.CompilerServices;
 using LostBoy.Items;
 
-public class Player : Stats,ICharacter
+public class Player : ICharacter
 {
     public struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
 
 
     private string name;
+  //  public Stats stats { get; protected set; }
     public float Health { get; protected set; }
     public float Armor { get; protected set; }
     public int ExperienceRequired { get; protected set; }
