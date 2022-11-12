@@ -60,7 +60,11 @@ public class Player : ICharacter
         this.color = ConsoleColor.Blue;
         this.ExperienceRequired = ((this.level * this.level) * 100);
         this.stats = new StatsBuilder()
-        .SetAPBase(100);
+            .SetAPBase(100)
+            .SetHealth(100)
+            .Build();
+
+
     }
      
 
