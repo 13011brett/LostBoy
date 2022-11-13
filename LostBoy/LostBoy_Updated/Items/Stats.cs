@@ -51,23 +51,23 @@ namespace LostBoy.Items
 
 
     }
-    public class ItemStatsBuilder : IStatsBuilder
+    public class ItemStatsBuilder 
     {
         private ItemStats buildee;
 
-        public virtual IStatsBuilder SetHealth(float newHp)
+        public virtual ItemStatsBuilder SetHealth(float newHp)
         {
             this.buildee.Health = newHp;
             return this;
 
         }
-        public virtual IStatsBuilder SetAPBase(int ap)
+        public virtual ItemStatsBuilder SetAPBase(int ap)
         {
             this.buildee.AttackPower = ap;
             return this;
         }
 
-        public virtual IStatsBuilder SetMovementSpeed(float speed)
+        public virtual ItemStatsBuilder SetMovementSpeed(float speed)
         {
             this.buildee.MovementSpeed = speed;
             return this;
@@ -75,29 +75,31 @@ namespace LostBoy.Items
 
 
 
-        public Stats? Build()
+        public ItemStats? Build()
         {
-            var shadow = this.buildee.Clone() as Stats;
+            var shadow = this.buildee.Clone() as ItemStats;
             this.buildee = new ItemStats();
             return shadow;
         }
         public ItemStatsBuilder() => this.buildee = new ItemStats();
     }
 
-    public class StatsBuilder : IStatsBuilder
+    public class StatsBuilder 
     {
         private Stats buildee;
 
-        public virtual void SetHealth(float newHp)
+        public virtual StatsBuilder SetHealth(float newHp)
         {
             this.buildee.Health = newHp;
+            return this;
         }
-        public virtual void SetAPBase(int ap)
+        public virtual StatsBuilder SetAPBase(int ap)
         {
             this.buildee.AttackPower = ap;
+            return this;
         }
 
-        public virtual IStatsBuilder SetMovementSpeed(float speed)
+        public virtual StatsBuilder SetMovementSpeed(float speed)
         {
             this.buildee.MovementSpeed = speed;
             return this;
@@ -115,7 +117,7 @@ namespace LostBoy.Items
 
 
     }
-    public interface IStatsBuilder{
+    public interface IStatsBuilder{ // Could not get this to work with a fluent builder. Works without it 
         void SetHealth(float newHP);
         void SetAPBase(int ap);
        // Stats Build();

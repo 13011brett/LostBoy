@@ -9,7 +9,7 @@ public class Player : ICharacter
 
 
     private string name;
-    public Stats stats { get; protected set; }
+    public Stats stats { get; set; }
     public float Health { get; protected set; }
     public float Armor { get; protected set; }
     public int ExperienceRequired { get; protected set; }
