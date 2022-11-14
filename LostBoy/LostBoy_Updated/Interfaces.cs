@@ -1,4 +1,4 @@
-﻿public interface ICharacter
+﻿public interface ICharacter  // Not used anymore.
 {
     // Fight
     void Movement(string Ioption);

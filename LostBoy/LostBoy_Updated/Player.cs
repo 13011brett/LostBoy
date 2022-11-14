@@ -3,7 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using LostBoy.Items;
 
-public class Player : ICharacter
+public class Player
 {
     public struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
 
@@ -172,31 +172,7 @@ public class Player : ICharacter
 
     }
 
-    public void Movement(string option) // Not really used, at all. Old, initial idea of movement that I never implemented.
-    {
-        switch (option)
-        {
-            case "d":
-                Console.WriteLine("You have moved to the right.");
-                this.location.x++;
-                break;
-            case "a":
-                Console.WriteLine("You have moved to the left.");
-                this.location.x--;
-                break;
-            case "w":
-                Console.WriteLine("You have moved forward.");
-                this.location.y++;
-                break;
-            case "s":
-                Console.WriteLine("You have moved backward.");
-                this.location.y--;
-                break;
-            default:
-                Console.WriteLine("\n\n Not a proper Movement Key. \n\n");
-                break;
-        }
-    }
+
 
 
 
