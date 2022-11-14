@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace LostBoy.Items
 {
-    public abstract class Armor : ObtainableItem
+    public class Armor : ObtainableItem
     {
-        public int Defense { get; protected set;  }
+        public int DefenseModifier { get; protected set;  }
 
         public Armor()
         {

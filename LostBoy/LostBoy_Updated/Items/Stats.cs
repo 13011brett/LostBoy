@@ -10,28 +10,19 @@ namespace LostBoy.Items
     public class Stats : ICloneable
     {
         public float Health { get; set; } = 0;
-        public float MovementSpeed { get; set; } = 0;
+        public float MovementModifier { get; set; } = 0;
         public int AttackPower { get; set; } = 0;
         public int Armor { get; set; } = 0;
-        public int Level { get; set; } = 1;
         public int Experience { get; set; } = 0;
         public int Intelligence { get; set; } = 0;
         public int Strength { get; set; } = 0;
         public int Dexterity { get; set; } = 0;
         public int Vitality { get; set; } = 0;
 
-        public Stats(float health = 0, float movementSpeed = 1, int attackPower = 0)
+        public Stats()
         {
-            Health = health;
-            MovementSpeed = movementSpeed;
-            AttackPower = attackPower;
-        }
 
-        public virtual void SetLevel(int theLevel)
-        {
-            if (this is ItemStats) return;
 
-            this.AttackPower = 10 * theLevel;
         }
         public object Clone() => this.MemberwiseClone();
 
@@ -67,12 +58,6 @@ namespace LostBoy.Items
             return this;
         }
 
-        public virtual ItemStatsBuilder SetMovementSpeed(float speed)
-        {
-            this.buildee.MovementSpeed = speed;
-            return this;
-        }
-
 
 
         public ItemStats? Build()
@@ -99,9 +84,9 @@ namespace LostBoy.Items
             return this;
         }
 
-        public virtual StatsBuilder SetMovementSpeed(float speed)
+        public virtual StatsBuilder SetMovementModifier(float speed)
         {
-            this.buildee.MovementSpeed = speed;
+            this.buildee.MovementModifier = speed;
             return this;
         }
        

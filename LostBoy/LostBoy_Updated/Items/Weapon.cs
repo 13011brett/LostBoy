@@ -17,13 +17,7 @@ namespace LostBoy.Items
             this.ItemSlot = 0;
         }
         
-        public void ProperLevel(Player p)
-        {
-            if(p.level >= this.LevelRequirement)
-            {
-                this.bIsEquippable = true;
-            } 
-        }
+
 
     }
 }

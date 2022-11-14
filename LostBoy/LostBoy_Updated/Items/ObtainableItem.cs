@@ -8,8 +8,8 @@ namespace LostBoy.Items
 {
     public abstract class ObtainableItem
     {
-        public Guid ID { get; set; }
-        public Stats stats { get; set; }
+        public Guid ID { get;  private set; }
+        public ItemStats stats { get; set; }
         public int LevelRequirement { get; protected set; }
         public string Name { get; set; }
         public string Type { get; protected set; }
@@ -22,6 +22,13 @@ namespace LostBoy.Items
         {
             //this.stats.Health = 100;
             this.ID = new Guid();
+        }
+        public void ProperLevel(Player p)
+        {
+            if (p.level >= this.LevelRequirement)
+            {
+                this.bIsEquippable = true;
+            }
         }
     }
 }
