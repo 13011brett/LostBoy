@@ -14,5 +14,19 @@ namespace LostBoy.Items
         {
 
         }
+
+    }
+
+    public class Chainmail : Armor
+    {
+        public Chainmail()
+        {
+            this.Name = "Chainmail";
+            this.stats = new ItemStatsBuilder()
+                .SetArmor(1000)
+                .Build();
+        }
     }
 }
+
+

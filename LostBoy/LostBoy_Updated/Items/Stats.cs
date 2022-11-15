@@ -12,7 +12,7 @@ namespace LostBoy.Items
         public float Health { get; set; } = 0;
         public float MovementModifier { get; set; } = 0;
         public int AttackPower { get; set; } = 0;
-        public int Armor { get; set; } = 0;
+        public float Armor { get; set; } = 0;
         public int Experience { get; set; } = 0;
         public int Intelligence { get; set; } = 0;
         public int Strength { get; set; } = 0;
@@ -37,7 +37,7 @@ namespace LostBoy.Items
     }
     public sealed class ItemStats : Stats
     {
-
+       public int RequiredLevel { get; set; } = 1;
 
 
 
@@ -58,6 +58,11 @@ namespace LostBoy.Items
             return this;
         }
 
+        public virtual ItemStatsBuilder SetArmor(float InArmor)
+        {
+            this.buildee.Armor = (this.buildee.RequiredLevel * this.buildee.Strength * 1.3f + InArmor);
+            return this;
+        }
 
 
         public ItemStats? Build()

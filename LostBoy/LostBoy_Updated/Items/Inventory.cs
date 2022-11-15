@@ -7,10 +7,23 @@ using System.Threading.Tasks;
 
 namespace LostBoy
 {
-    internal class Inventory
+    public class Inventory
     {
-        private const int ITEM_SLOTS = 10;
-        List<ObtainableItem> obtainableItems = new List<ObtainableItem>();
+        private const int MAX_ITEM_SLOT = 10;
+        public List<ObtainableItem> obtainableItems { get; protected set; } = new List<ObtainableItem>();
+        public void AddItem(ObtainableItem item, int quantity)
+        {
+            while(quantity> 0 && obtainableItems.Count < MAX_ITEM_SLOT)
+            {
+                if(item is Armor)
+                {
+                    for(int i = 0; i < quantity; i++)
+                    {
+                        obtainableItems.Add(item);
+                    }
+                }
+            }
+        }
 
 
 

@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using LostBoy.Items;
 
 
 // Mostly everything in this was my own implementation, for better or for worse. I wanted to challenge myself to see how far I can get off of my own ideas in crafting
@@ -48,9 +49,12 @@ namespace LostBoy
             Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon); // Need to rename function, this is the main gameplay loop.
             Console.Clear();
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            Console.WriteLine(player.playerInventory.obtainableItems[0].stats.Armor);
             Console.ReadLine();
             Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon);
+            
             //Console.SetCursorPosition((Console.WindowWidth/2), (Console.WindowHeight-5));
 
 

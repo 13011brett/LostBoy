@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using LostBoy.Items;
+using LostBoy;
 
 public class Player
 {
@@ -10,6 +11,7 @@ public class Player
 
     private string name;
     public Stats stats { get; set; }
+    public Inventory playerInventory = new Inventory();
     public float Health { get; protected set; }
     public float Armor { get; protected set; }
     public int ExperienceRequired { get; protected set; }
