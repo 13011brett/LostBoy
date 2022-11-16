@@ -49,8 +49,10 @@ namespace LostBoy
             Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon); // Need to rename function, this is the main gameplay loop.
             Console.Clear();
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            Console.WriteLine(player.playerInventory.obtainableItems[0].stats.Armor);
+            player.playerInventory.AddItem(new Chainmail(), 4);
+            player.playerInventory.AddItem(new Chainmail(), 4);
+            Console.WriteLine(player.playerInventory.obtainableItems[0].ID);
+            Console.WriteLine(player.playerInventory.obtainableItems[1].ID);
             Console.ReadLine();
             Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon);

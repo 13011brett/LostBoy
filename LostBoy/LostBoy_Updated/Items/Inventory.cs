@@ -9,25 +9,34 @@ namespace LostBoy
 {
     public class Inventory
     {
-        private const int MAX_ITEM_SLOT = 10;
+        private const int MAX_ITEM_SLOTS = 10;
         public List<ObtainableItem> obtainableItems { get; protected set; } = new List<ObtainableItem>();
         public void AddItem(ObtainableItem item, int quantity)
         {
-            while(quantity> 0 && obtainableItems.Count < MAX_ITEM_SLOT)
+            foreach(var piece in obtainableItems)
             {
-                if(item is Armor)
+                if(item.ID == piece.ID)
                 {
-                    for(int i = 0; i < quantity; i++)
-                    {
-                        obtainableItems.Add(item);
-                    }
+                    if (quantity + piece.Quantity < piece.QuantityMax) piece.Quantity += quantity;
                 }
             }
+ 
+
+
+            if (obtainableItems.Count < MAX_ITEM_SLOTS)
+            {
+                if(quantity > item.QuantityMax) item.Quantity = item.QuantityMax;
+                else item.Quantity = quantity;
+                obtainableItems.Add(item);
+            }
+                
+         }
+            
         }
 
 
 
 
 
-    }
+    
 }

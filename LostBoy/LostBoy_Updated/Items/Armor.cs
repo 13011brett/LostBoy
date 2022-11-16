@@ -9,6 +9,8 @@ namespace LostBoy.Items
     public class Armor : ObtainableItem
     {
         public int DefenseModifier { get; protected set;  }
+        public static Guid ItemType = Guid.NewGuid();
+        
 
         public Armor()
         {

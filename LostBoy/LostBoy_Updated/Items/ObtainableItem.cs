@@ -8,7 +8,7 @@ namespace LostBoy.Items
 {
     public abstract class ObtainableItem
     {
-        public Guid ID { get;  private set; }
+        public  Guid ID { get; private set; } = Guid.NewGuid();
         public ItemStats stats { get; set; }
         public int LevelRequirement { get; protected set; }
         public string Name { get; set; }
@@ -17,11 +17,13 @@ namespace LostBoy.Items
         public bool bIsConsumable { get; protected set; }
         public int ItemSlot { get; protected set; }
         public int Quality { get; protected set; }
+        public int Quantity { get; set; } = 1;
+        public int QuantityMax { get; protected set; } = 1;
             
         public ObtainableItem()
         {
             //this.stats.Health = 100;
-            this.ID = new Guid();
+            //this.ID = Guid.NewGuid();
         }
         public void ProperLevel(Player p)
         {
