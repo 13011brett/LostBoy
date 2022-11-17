@@ -10,6 +10,7 @@ namespace LostBoy.Items
     public class Stats : ICloneable
     {
         public float Health { get; set; } = 0;
+        public float Mana { get; set; } = 0;
         public float MovementModifier { get; set; } = 0;
         public int AttackPower { get; set; } = 0;
         public float Armor { get; set; } = 0;
@@ -26,6 +27,18 @@ namespace LostBoy.Items
         }
         public object Clone() => this.MemberwiseClone();
 
+        public virtual void OutputStats()
+        {
+            if(Health != 0) Console.WriteLine("Health = " + Health);
+            if (Mana != 0) Console.WriteLine("Mana = " + Mana);
+            if (AttackPower != 0) Console.WriteLine("Attack Power Rating = " + AttackPower);
+            if(Armor != 0) Console.WriteLine("Armor = " + Armor);
+            if(Strength != 0) Console.WriteLine("Strength = " + Strength);
+            if(Dexterity != 0) Console.WriteLine("Dexterity = " + Dexterity);
+            if(Vitality != 0) Console.WriteLine("Vitality = " + Vitality);
+            if(Intelligence != 0) Console.WriteLine("Intelligence = " + Intelligence);
+        }
+
 
 
 
@@ -37,7 +50,13 @@ namespace LostBoy.Items
     }
     public sealed class ItemStats : Stats
     {
-       public int RequiredLevel { get; set; } = 1;
+        public int RequiredLevel { get; set; } = 1;
+        public override void OutputStats()
+        {
+            Console.WriteLine("Required Level = " + RequiredLevel + "\n");
+            base.OutputStats();
+            Console.Write("\n\n");
+        }
 
 
 
