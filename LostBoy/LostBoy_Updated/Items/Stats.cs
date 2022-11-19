@@ -113,7 +113,13 @@ namespace LostBoy.Items
             this.buildee.MovementModifier = speed;
             return this;
         }
-       
+
+        public virtual StatsBuilder SetArmor(int armor)
+        {
+            this.buildee.Armor = armor;
+            return this;
+        }
+
 
 
         public Stats? Build()

@@ -27,6 +27,7 @@ namespace LostBoy.Items
             this.stats = new ItemStatsBuilder()
                 .SetArmor(1000)
                 .Build();
+            this.bIsEquippable = true;
         }
     }
 }

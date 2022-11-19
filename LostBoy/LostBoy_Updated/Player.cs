@@ -64,6 +64,7 @@ public class Player
         this.stats = new StatsBuilder()
             .SetAPBase(100)
             .SetHealth(100)
+            .SetArmor(9123)
             .Build();
 
 
@@ -175,7 +176,22 @@ public class Player
     }
 
 
+    public void EquipItem(ObtainableItem item)
+    {
+        if (item.bIsEquippable && !item.bIsEquipped) //This will constantly add stats and not take them away, doesn't account for item slots.. all bad right now. More of a POC.
+        {
+            this.stats.Health += item.stats.Health;
+            this.stats.Strength += item.stats.Strength;
+            this.stats.Dexterity += item.stats.Dexterity;
+            this.stats.Vitality += item.stats.Vitality;
+            this.stats.Intelligence += item.stats.Intelligence;
+            this.stats.Armor += item.stats.Armor;
+            this.stats.AttackPower += item.stats.AttackPower; // May be a better way to add in the stats, not sure.
 
+            item.bIsEquipped = !item.bIsEquipped;
+        }
+        else if (item.bIsEquipped) Console.WriteLine(item.Name + " Is already Equipped.");
+    }
 
 
 }

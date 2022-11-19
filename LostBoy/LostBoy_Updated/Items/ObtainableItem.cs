@@ -14,6 +14,7 @@ namespace LostBoy.Items
         public string Name { get; set; }
         public string Type { get; protected set; }
         public bool bIsEquippable { get; protected set; }
+        public bool bIsEquipped { get; set; } = false;
         public bool bIsConsumable { get; protected set; }
         public int ItemSlot { get; protected set; }
         public int Quality { get; protected set; }
