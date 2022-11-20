@@ -36,7 +36,7 @@ namespace LostBoy.Items
             if(Strength != 0) Console.WriteLine("Strength = " + Strength);
             if(Dexterity != 0) Console.WriteLine("Dexterity = " + Dexterity);
             if(Vitality != 0) Console.WriteLine("Vitality = " + Vitality);
-            if(Intelligence != 0) Console.WriteLine("Intelligence = " + Intelligence);
+            if (Intelligence != 0) Console.WriteLine("Intelligence = " + Intelligence);
         }
 
 

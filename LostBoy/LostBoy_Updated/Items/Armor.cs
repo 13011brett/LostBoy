@@ -28,6 +28,7 @@ namespace LostBoy.Items
                 .SetArmor(1000)
                 .Build();
             this.bIsEquippable = true;
+            this.itemslot = ItemSlot.Chest;
         }
     }
 }

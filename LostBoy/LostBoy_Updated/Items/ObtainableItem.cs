@@ -16,7 +16,7 @@ namespace LostBoy.Items
         public bool bIsEquippable { get; protected set; }
         public bool bIsEquipped { get; set; } = false;
         public bool bIsConsumable { get; protected set; }
-        public int ItemSlot { get; protected set; }
+        public ItemSlot itemslot { get; protected set; }
         public int Quality { get; protected set; }
         public int Quantity { get; set; } = 1;
         public int QuantityMax { get; protected set; } = 1;
@@ -32,6 +32,20 @@ namespace LostBoy.Items
             {
                 this.bIsEquippable = true;
             }
+        }
+        public enum ItemSlot
+        {
+            Head,
+            Shoulders,
+            Chest,
+            Gloves,
+            Belt,
+            Legs,
+            Feet,
+            Necklace,
+            Ring,
+            Hands
+
         }
     }
 }

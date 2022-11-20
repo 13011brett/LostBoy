@@ -52,7 +52,7 @@ namespace LostBoy
             player.playerInventory.AddItem(new Chainmail(), 4);
             player.playerInventory.AddItem(new Chainmail(), 4);
             player.EquipItem(player.playerInventory.obtainableItems[0]);
-            Console.WriteLine(player.stats.Armor);
+            Console.WriteLine(player.playerInventory.obtainableItems[0].itemslot);
             Console.ReadLine();
             Map.EnemiesToScreen(Dungeon);
             Map.ScreenMovement(player, Dungeon);

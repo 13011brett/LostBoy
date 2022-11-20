@@ -14,7 +14,7 @@ namespace LostBoy.Items
         public Weapon()
         {
             this.bIsConsumable = false;
-            this.ItemSlot = 0;
+            this.itemslot = ItemSlot.Hands;
         }
         
 
