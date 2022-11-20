@@ -178,6 +178,22 @@ public class Player
 
     public void EquipItem(ObtainableItem item)
     {
+        foreach(var piece in playerInventory.obtainableItems)
+        {
+            if(item.itemslot == piece.itemslot && piece.bIsEquipped)
+            {
+                //UnEquipItem()
+                this.stats.Health -= piece.stats.Health;
+                this.stats.Strength -= piece.stats.Strength;
+                this.stats.Dexterity -= piece.stats.Dexterity;
+                this.stats.Vitality -= piece.stats.Vitality;
+                this.stats.Intelligence -= piece.stats.Intelligence;
+                this.stats.Armor -= piece.stats.Armor;
+                this.stats.AttackPower -= piece.stats.AttackPower;
+                piece.bIsEquipped = false;
+
+            }
+        }
         if (item.bIsEquippable && !item.bIsEquipped) //This will constantly add stats and not take them away, doesn't account for item slots.. all bad right now. More of a POC.
         {
             this.stats.Health += item.stats.Health;
