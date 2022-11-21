@@ -38,24 +38,26 @@ namespace LostBoy
                 
          }
 
-        public void ViewInventory()
+        public void ViewInventory(Player p)
         {
             string choice;
             bool bIsDone = false;
-            Console.Clear();
-            int i = 1;
-            foreach (var piece in obtainableItems)
-            {
-                Console.WriteLine(piece.Name + "\t " + i);
-                piece.InventorySlot = i;
-                i++;
 
-                //piece.stats.OutputStats();
-
-            }
             while (!bIsDone)
             {
+                int i = 1;
+                Console.Clear();
+                foreach (var piece in obtainableItems)
+                {
+                    string isEquipped = " ";
+                    if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
+                    Console.WriteLine(piece.Name + "\t " + i + isEquipped);
+                    piece.InventorySlot = i;
+                    i++;
 
+                    //piece.stats.OutputStats();
+
+                }
 
                 Console.WriteLine("Select an item you wish to view via the corresponding #. ");
                 choice = Console.ReadLine();
@@ -65,8 +67,13 @@ namespace LostBoy
                     if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
                     {
                         piece.stats.OutputStats();
+                        if (piece.bIsEquippable)
+                        {
+                            Console.WriteLine("Would you like to equip this item? (Y/N)");
+                            if (Console.ReadLine() == "Y" && p.level >= piece.LevelRequirement) p.EquipItem(piece);
+                        }
                         Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
-                        if(Console.ReadLine() == "Y") break;
+                        if (Console.ReadLine() == "Y") break;
                         bIsDone = true;
                     }
 
@@ -74,8 +81,6 @@ namespace LostBoy
                 }
             }
         }
-
-            
     }
 
 

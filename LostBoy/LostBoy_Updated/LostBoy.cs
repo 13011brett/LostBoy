@@ -39,17 +39,12 @@ namespace LostBoy
             
             Map Dungeon = new Map(200, 100, 10); // Testing Map One
             Map Castle = new Map(100, 50, 30);
-            //Enemy enemy = new Enemy(Dungeon);
-            //Dungeon.EnemyCreation(Dungeon);// Testing an enemy within the map.
-
-
-            Console.Clear();
             Map.DrawMap(Dungeon, player);
             Console.Clear();
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.ViewInventory();
+            player.playerInventory.ViewInventory(player);
 
             Console.WriteLine(player.playerInventory.obtainableItems[0].bIsEquipped);
             Console.WriteLine(player.stats.Armor);
