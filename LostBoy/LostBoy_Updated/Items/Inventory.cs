@@ -67,11 +67,14 @@ namespace LostBoy
                     if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
                     {
                         piece.stats.OutputStats();
-                        if (piece.bIsEquippable)
+
+                        if (piece.bIsEquippable && !piece.bIsEquipped)
                         {
                             Console.WriteLine("Would you like to equip this item? (Y/N)");
                             if (Console.ReadLine() == "Y" && p.level >= piece.LevelRequirement) p.EquipItem(piece);
                         }
+                        else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
+                        else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
                         Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
                         if (Console.ReadLine() == "Y") break;
                         bIsDone = true;
