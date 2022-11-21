@@ -40,12 +40,38 @@ namespace LostBoy
 
         public void ViewInventory()
         {
+            string choice;
+            bool bIsDone = false;
             Console.Clear();
+            int i = 1;
             foreach (var piece in obtainableItems)
             {
-                Console.WriteLine(piece.Name);
-                piece.stats.OutputStats();
+                Console.WriteLine(piece.Name + "\t " + i);
+                piece.InventorySlot = i;
+                i++;
 
+                //piece.stats.OutputStats();
+
+            }
+            while (!bIsDone)
+            {
+
+
+                Console.WriteLine("Select an item you wish to view via the corresponding #. ");
+                choice = Console.ReadLine();
+                foreach (var piece in obtainableItems)
+                {
+                    int x = 0;
+                    if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
+                    {
+                        piece.stats.OutputStats();
+                        Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
+                        if(Console.ReadLine() == "Y") break;
+                        bIsDone = true;
+                    }
+
+
+                }
             }
         }
 

@@ -10,6 +10,7 @@ namespace LostBoy.Items
     {
         public  Guid ID { get; private set; } = Guid.NewGuid();
         public ItemStats stats { get; set; }
+        public int InventorySlot { get; set; }
         public int LevelRequirement { get; protected set; }
         public string Name { get; set; }
         public string Type { get; protected set; }

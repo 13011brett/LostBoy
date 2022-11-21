@@ -182,6 +182,11 @@ public class Player
         {
             if(item.itemslot == piece.itemslot && piece.bIsEquipped)
             {
+                if (item.bIsEquipped && item.ID == piece.ID) // If somehow you equip the same item twice
+                {
+                    Console.WriteLine(item.Name + " Is already Equipped.");
+                    break;
+                }
                 //UnEquipItem()
                 this.stats.Health -= piece.stats.Health;
                 this.stats.Strength -= piece.stats.Strength;
@@ -194,7 +199,10 @@ public class Player
 
             }
         }
-        if (item.bIsEquippable && !item.bIsEquipped) //This will constantly add stats and not take them away, doesn't account for item slots.. all bad right now. More of a POC.
+
+
+
+        if (item.bIsEquippable && !item.bIsEquipped) //Kinda works, probably should be improved on. 
         {
             this.stats.Health += item.stats.Health;
             this.stats.Strength += item.stats.Strength;
@@ -204,9 +212,9 @@ public class Player
             this.stats.Armor += item.stats.Armor;
             this.stats.AttackPower += item.stats.AttackPower; // May be a better way to add in the stats, not sure.
 
-            item.bIsEquipped = !item.bIsEquipped;
+            item.bIsEquipped = true;
         }
-        else if (item.bIsEquipped) Console.WriteLine(item.Name + " Is already Equipped.");
+
     }
 
 

@@ -36,7 +36,8 @@ public class Map : Player
         this.mapDifficulty = difficulty;
         if(this.mapSize.x > (Console.LargestWindowWidth-20)) this.mapSize.x = (Console.LargestWindowWidth-20);
         if (this.mapSize.y > (Console.LargestWindowHeight-10)) this.mapSize.y = (Console.LargestWindowHeight-10);
-        Console.SetWindowSize(((int)this.mapSize.x), ((int)this.mapSize.y));
+        EnemyCreation(this);
+
     }
     public void EnemyCreation(Map map) // All enemy creation will be done within the map, currently works off of map difficulty but can be modularized. 
     {
@@ -84,7 +85,7 @@ public class Map : Player
         Console.Clear();
     }
 
-    public static void FillBorder(char c)
+    public static void FillBorder(char c = '-')
     {
         Map.Border = c;
         for(int i = 0; i < Console.WindowHeight; i++)
@@ -127,6 +128,16 @@ public class Map : Player
             }
         }
         Console.ForegroundColor = currentColor;
+    }
+    public static void DrawMap(Map map, Player player)
+    {
+        Console.Clear();
+        Console.SetWindowSize(((int)map.mapSize.x), ((int)map.mapSize.y));
+        Map.FillBorder();
+        Map.EnemiesToScreen(map);
+        Map.ScreenMovement(player, map);
+
+
     }
 
     public static void AttackSequence(Player player, Map map)
