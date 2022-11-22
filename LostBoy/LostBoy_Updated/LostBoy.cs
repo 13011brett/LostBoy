@@ -56,7 +56,7 @@ namespace LostBoy
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.ViewInventory(player);
+            player.ViewInventory();
 
 
             Console.WriteLine(player.playerInventory.InventoryItems[0].bIsEquipped);

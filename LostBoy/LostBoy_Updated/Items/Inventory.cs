@@ -42,52 +42,7 @@ namespace LostBoy
                 
          }
 
-        public void ViewInventory(Player p)
-        {
-            string choice;
-            bool bIsDone = false;
 
-            while (!bIsDone)
-            {
-                int i = 1;
-                Console.Clear();
-                foreach (var piece in InventoryItems)
-                {
-                    string isEquipped = " ";
-                    if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
-                    Console.WriteLine(piece.Name + "\t " + i + isEquipped);
-                    piece.InventorySlot = i;
-                    i++;
-
-                    //piece.stats.OutputStats();
-
-                }
-
-                Console.WriteLine("Select an item you wish to view via the corresponding #. ");
-                choice = Console.ReadLine();
-                foreach (var piece in InventoryItems)
-                {
-                    int x = 0;
-                    if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
-                    {
-                        piece.stats.OutputStats();
-
-                        if (piece.bIsEquippable && !piece.bIsEquipped)
-                        {
-                            Console.WriteLine("Would you like to equip this item? (Y/N)");
-                            if (Console.ReadLine() == "Y" && p.level >= piece.LevelRequirement) p.EquipItem(piece);
-                        }
-                        else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
-                        else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
-                        Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
-                        if (Console.ReadLine() == "Y") break;
-                        bIsDone = true;
-                    }
-
-
-                }
-            }
-        }
     }
 
 

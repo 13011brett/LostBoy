@@ -22,6 +22,7 @@ public class Player
     public int Experience { get; protected set; }
     public char icon { get; protected set; } = 'p';
     protected ConsoleColor color;
+    public Map CurrentMap { get; set; }
     //public float Health
     //{
     //    get { return health; }
@@ -215,6 +216,61 @@ public class Player
             item.bIsEquipped = true;
         }
 
+    }
+    public void ViewInventory()
+    {
+        string choice;
+        bool bIsDone = false;
+        if(this.playerInventory.InventoryItems.Count == 0)
+        {
+            Console.Clear();
+            Console.WriteLine("You have no items currently!");
+            System.Threading.Thread.Sleep(500);
+            Map.DrawMap(this.CurrentMap, this);
+            return;
+        }
+
+        while (!bIsDone)
+        {
+            int i = 1;
+            Console.Clear();
+            foreach (var piece in this.playerInventory.InventoryItems)
+            {
+                string isEquipped = " ";
+                if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
+                Console.WriteLine(piece.Name + "\t " + i + isEquipped);
+                piece.InventorySlot = i;
+                i++;
+
+                //piece.stats.OutputStats();
+
+            }
+
+            Console.WriteLine("Select an item you wish to view via the corresponding #. ");
+            choice = Console.ReadLine();
+            foreach (var piece in this.playerInventory.InventoryItems)
+            {
+                int x = 0;
+                if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
+                {
+                    piece.stats.OutputStats();
+
+                    if (piece.bIsEquippable && !piece.bIsEquipped)
+                    {
+                        Console.WriteLine("Would you like to equip this item? (Y/N)");
+                        if (Console.ReadLine() == "Y" && this.level >= piece.LevelRequirement) this.EquipItem(piece);
+                    }
+                    else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
+                    else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
+                    Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
+                    if (Console.ReadLine() == "Y") break;
+                    bIsDone = true;
+                    Map.DrawMap(this.CurrentMap, this);
+                }
+
+
+            }
+        }
     }
 
 

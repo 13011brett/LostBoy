@@ -139,6 +139,7 @@ public class Map : Player
             map.ResetLoc = false;
         }
         Console.Clear();
+        player.CurrentMap = map;
         Console.SetWindowSize(((int)map.mapSize.x), ((int)map.mapSize.y));
         Map.FillBorder();
         Map.EnemiesToScreen(map);
@@ -217,6 +218,7 @@ public class Map : Player
             AttackSequence(player, map);
             Enemy.Movement(map);
             Player.DoMovement(player, map, 1);
+            if (Story.GetKey(0x49)) player.ViewInventory();
             if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
             {
                 break;
