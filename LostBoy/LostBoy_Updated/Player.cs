@@ -178,7 +178,7 @@ public class Player
 
     public void EquipItem(ObtainableItem item)
     {
-        foreach(var piece in playerInventory.obtainableItems)
+        foreach(var piece in playerInventory.InventoryItems)
         {
             if(item.itemslot == piece.itemslot && piece.bIsEquipped)
             {

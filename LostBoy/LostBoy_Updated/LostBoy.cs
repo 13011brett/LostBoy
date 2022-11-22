@@ -44,9 +44,24 @@ namespace LostBoy
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.ViewInventory(player);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.ViewInventory(player);
 
-            Console.WriteLine(player.playerInventory.obtainableItems[0].bIsEquipped);
+            Console.WriteLine(player.playerInventory.InventoryItems[0].bIsEquipped);
             Console.WriteLine(player.stats.Armor);
             Map.DrawMap(Castle, player);
             

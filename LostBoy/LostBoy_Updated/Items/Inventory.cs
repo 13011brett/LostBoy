@@ -10,30 +10,34 @@ namespace LostBoy
     public class Inventory
     {
         private const int MAX_ITEM_SLOTS = 10;
-        public List<ObtainableItem> obtainableItems { get; protected set; } = new List<ObtainableItem>();
+        public List<ObtainableItem> InventoryItems { get; protected set; } = new List<ObtainableItem>();
+        public int EquippedItems = 0;
+        
         public void AddItem(ObtainableItem item, int quantity)
         {
             bool MatchFound = false;
-            foreach (var piece in obtainableItems)
+            EquippedItems = 0;
+            foreach (var piece in InventoryItems)
             {
-                
-                if(item.ID == piece.ID)
+                if (piece.bIsEquipped) EquippedItems++;
+                if (item.ID == piece.ID)
                 {
                     if (quantity + piece.Quantity < piece.QuantityMax) piece.Quantity += quantity;
                     else piece.Quantity = piece.QuantityMax;
                     MatchFound = true;
                     break;
                 }
+
                
             }
  
 
 
-            if (obtainableItems.Count < MAX_ITEM_SLOTS && !MatchFound) // Only  create an item if an item slot exists for it and a match is not found for the identifier. 
+            if ((InventoryItems.Count - EquippedItems)< MAX_ITEM_SLOTS && !MatchFound) // Only  create an item if an item slot exists for it and a match is not found for the identifier. 
             {
                 if(quantity > item.QuantityMax) item.Quantity = item.QuantityMax;
                 else item.Quantity = quantity;
-                obtainableItems.Add(item);
+                InventoryItems.Add(item);
             }
                 
          }
@@ -47,7 +51,7 @@ namespace LostBoy
             {
                 int i = 1;
                 Console.Clear();
-                foreach (var piece in obtainableItems)
+                foreach (var piece in InventoryItems)
                 {
                     string isEquipped = " ";
                     if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
@@ -61,7 +65,7 @@ namespace LostBoy
 
                 Console.WriteLine("Select an item you wish to view via the corresponding #. ");
                 choice = Console.ReadLine();
-                foreach (var piece in obtainableItems)
+                foreach (var piece in InventoryItems)
                 {
                     int x = 0;
                     if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
