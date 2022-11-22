@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Linq.Expressions;
 
 public class Map : Player
 {
@@ -28,6 +29,7 @@ public class Map : Player
             mapDifficulty = value;
         }
     }
+    public bool ResetLoc { get; protected set; } = true;
 
     public Map(float map_x, float map_y, int difficulty)
     {
@@ -131,11 +133,17 @@ public class Map : Player
     }
     public static void DrawMap(Map map, Player player)
     {
+        if (map.ResetLoc)
+        {
+            player.ResetLocation(ref map);
+            map.ResetLoc = false;
+        }
         Console.Clear();
         Console.SetWindowSize(((int)map.mapSize.x), ((int)map.mapSize.y));
         Map.FillBorder();
         Map.EnemiesToScreen(map);
         Map.ScreenMovement(player, map);
+        
 
 
     }
@@ -188,12 +196,22 @@ public class Map : Player
     public static void ScreenMovement(Player player, Map map) // This is the main gameplay walking loop at this point. It holds the WASD movement and also monster movement.
     {
         Player.Vec3 vec3;
-        vec3.x = (int)((map.MapSize.x/2));
-        vec3.y = (int)(map.MapSize.y-1); 
-        vec3.z = map.MapSize.z;
-        player.Location = vec3;
-        Console.CursorVisible = false;
-        Console.SetCursorPosition(((int)vec3.x/2), ((int)(vec3.y))); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
+        if (player.Location.x == 0 && player.Location.y == 0 && player.Location.z == 0)
+        {
+            vec3.x = (int)((map.MapSize.x / 2));
+            vec3.y = (int)(map.MapSize.y - 1);
+            vec3.z = map.MapSize.z;
+            player.Location = vec3;
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(((int)player.Location.x / 2), ((int)(player.Location.y))); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
+            Console.Write(player.icon);
+        }
+        else
+        {
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(((int)player.Location.x), ((int)(player.Location.y))); // Center screen to initialize, may want to write this into the constructor. BUT maybe not.
+            Console.Write(player.icon);
+        }
         do
         {
             AttackSequence(player, map);

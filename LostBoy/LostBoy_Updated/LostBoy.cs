@@ -57,13 +57,11 @@ namespace LostBoy
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.ViewInventory(player);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.ViewInventory(player);
+
 
             Console.WriteLine(player.playerInventory.InventoryItems[0].bIsEquipped);
             Console.WriteLine(player.stats.Armor);
-            Map.DrawMap(Castle, player);
+            Map.DrawMap(Dungeon, player);
             
             //Console.SetCursorPosition((Console.WindowWidth/2), (Console.WindowHeight-5));
 

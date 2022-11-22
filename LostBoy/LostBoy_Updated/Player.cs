@@ -20,7 +20,7 @@ public class Player
     private bool bMoving;
     public int level = 1;
     public int Experience { get; protected set; }
-    protected char icon = 'p';
+    public char icon { get; protected set; } = 'p';
     protected ConsoleColor color;
     //public float Health
     //{
