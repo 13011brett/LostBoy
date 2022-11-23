@@ -29,7 +29,7 @@ namespace LostBoy.Items
 
         public virtual void OutputStats()
         {
-            if(Health != 0) Console.WriteLine("Health = " + Health);
+            if(!(this is ItemStats))Console.WriteLine("Health = " + Health);
             if (Mana != 0) Console.WriteLine("Mana = " + Mana);
             if (AttackPower != 0) Console.WriteLine("Attack Power Rating = " + AttackPower);
             if(Armor != 0) Console.WriteLine("Armor = " + Armor);

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 public class Map : Player
 {
@@ -117,7 +118,7 @@ public class Map : Player
             //int toPosY = (int)enemies.Location.y;// * ((int)map.MapSize.y); Old WEIRD method, not sure what I thought this would accomplish before....
 
             //I have now made it relative to window height and width :))
-            if (enemies.Health >= 0)
+            if (enemies.stats.Health >= 0)
             {
                 if (enemies.LocationX == 0) enemies.LocationX += 1;
                 else if (enemies.LocationX == (Console.WindowWidth - 1)) enemies.LocationX -= 1;
@@ -149,31 +150,54 @@ public class Map : Player
 
 
     }
+    public static Map endGame = new Map(100, 100, 0);
 
     public static void AttackSequence(Player player, Map map)
     {
         foreach (var ene in map.enemies)
         {
-            if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y && ene.Health > 0)
+            if (ene.LocationX == player.Location.x && ene.LocationY == player.Location.y && ene.stats.Health > 0)
             {
 
                 
                 Map.TimeClearScreen(0);
                 Console.SetCursorPosition(0, 0);
                 Console.SetWindowSize(200, 60);
-                Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!");
+                Console.Write("Player Health is " + player.stats.Health + "\nEnemy health is " + ene.stats.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience + "/" + player.ExperienceRequired + "\nCurrent Level = " + player.level);
 
                 do
                 {
+                    if (player.stats.Health <= 0)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("You are too weak to fight!");
+                        System.Threading.Thread.Sleep(2500);
+                        player.stats.Health = 0;
+                        player.ResetLocation(ref map);
+                        break;
+
+                    }
 
                     if ((Story.GetAsyncKeyState(0x4B) & 0x8000) == 0x8000)
                     {
                         Console.Clear();
-                        if (player.Health <= 0) Console.Write("Game Over.");
+
                         Player.Damage(ref player, ene);
-                        if (ene.Health <= 0) break;
-                        Console.Write("Player Health is " + player.Health + "\nEnemy health is " + ene.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience + "/" + player.ExperienceRequired + "\nCurrent Level = " + player.level);
-                        System.Threading.Thread.Sleep(10);
+                        if (ene.stats.Health <= 0) break;
+                        else if(player.stats.Health <= 0)
+                        {
+
+                            Console.Clear();
+                            Console.WriteLine("You are too weak to fight!");
+                            player.stats.Health = 0;
+                            System.Threading.Thread.Sleep(2500);
+                            player.ResetLocation(ref map);
+                            break;
+
+                            
+                        }
+                        Console.Write("Player Health is " + player.stats.Health + "\nEnemy health is " + ene.stats.Health + "\n\n\n" + "Press K to attack, R to run away!\n\n" + "Current Experience = " + player.Experience + "/" + player.ExperienceRequired + "\nCurrent Level = " + player.level);
+                        System.Threading.Thread.Sleep(100);
 
 
                     }
@@ -182,9 +206,11 @@ public class Map : Player
                         player.ResetLocation(ref map);
                         break;
                     }
-                } while (player.Health >= 0);
+                } while (player.stats.Health >= 0);
+                Console.WriteLine(ene.Name + " Vanquished!\n" + "Experience Gained: " + ene.Experience );
                 GainExperience(player, ene);
                 Map.DrawMap(map, player);
+                
                 //Console.Clear();
                 //Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
                 //Map.FillBorder(Map.Border);               

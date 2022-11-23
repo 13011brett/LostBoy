@@ -13,7 +13,6 @@ public class Player
     private string name;
     public Stats stats { get; set; }
     public Inventory playerInventory = new Inventory();
-    public float Health { get; protected set; }
     public float Armor { get; protected set; }
     public int ExperienceRequired { get; protected set; }
     public float damage { get; protected set; }
@@ -57,7 +56,7 @@ public class Player
         }*/
     public Player()
     {
-        this.Health = 10000;
+        
         this.damage = level * (RandomNumber(level, level + 50));
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
@@ -150,13 +149,13 @@ public class Player
 
     public static void Damage(ref Player attacker, Player attackee)
     {
-        attacker.Health -= attackee.damage;
-        attackee.Health -= attacker.damage;
+        attacker.stats.Health -= attackee.damage;
+        attackee.stats.Health -= attacker.damage;
     }
 
     public static void GainExperience(Player player, Player enemy)
     {
-        if(enemy.Health <= 0)
+        if(enemy.stats.Health <= 0)
         {
             player.Experience += enemy.Experience;
             GetLevel(player);
