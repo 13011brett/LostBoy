@@ -287,7 +287,8 @@ public class Player
                             if (piece.bIsEquippable && !piece.bIsEquipped)
                             {
                                 Console.WriteLine("Would you like to equip this item? (Y/N)");
-                                if (Console.ReadLine() == "Y" && this.level >= piece.LevelRequirement) this.EquipItem(piece);
+                                if (Console.ReadLine() == "Y" && this.level >= piece.stats.RequiredLevel) this.EquipItem(piece);
+                                if (this.level < piece.stats.RequiredLevel) Console.WriteLine("This item cannot be equipped.");
                             }
                             else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
                             else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");

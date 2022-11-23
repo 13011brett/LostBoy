@@ -71,6 +71,12 @@ namespace LostBoy.Items
             return this;
 
         }
+        public virtual ItemStatsBuilder SetLevelReq(int Level)
+        {
+            this.buildee.RequiredLevel = Level;
+            return this;
+
+        }
         public virtual ItemStatsBuilder SetAPBase(int ap)
         {
             this.buildee.AttackPower = ap;

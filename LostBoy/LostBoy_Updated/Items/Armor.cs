@@ -26,6 +26,7 @@ namespace LostBoy.Items
             this.Name = "Chainmail";
             this.stats = new ItemStatsBuilder()
                 .SetArmor(Player.RandomNumber(100, 255))
+                .SetLevelReq(2)
                 .Build();
             this.bIsEquippable = true;
             this.itemslot = ItemSlot.Chest;

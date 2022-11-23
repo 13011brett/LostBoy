@@ -15,6 +15,7 @@ namespace LostBoy.Items
         {
             this.bIsConsumable = false;
             this.itemslot = ItemSlot.Hands;
+            this.bIsEquippable = true;
         }
         
 
