@@ -3,6 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using LostBoy.Items;
 using LostBoy;
+using System.Reflection.Emit;
 
 public class Player
 {
@@ -219,21 +220,36 @@ public class Player
     }
     public void ViewInventory()
     {
+        Console.Clear();
+
+
+        Console.WriteLine("Current Stats: ");
+        this.stats.OutputStats();
+        Console.WriteLine("Experience: " + this.Experience + "/" + ExperienceRequired + "\n" + "Current Level: " + this.level + "\n\n");
         string choice;
         bool bIsDone = false;
         if(this.playerInventory.InventoryItems.Count == 0)
         {
-            Console.Clear();
             Console.WriteLine("You have no items currently!");
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(1500);
             Map.DrawMap(this.CurrentMap, this);
             return;
         }
 
-        while (!bIsDone)
-        {
+            InventoryStart:
             int i = 1;
             Console.Clear();
+            string equipItems = "Equip / View items = E Key.";
+            string quitInv = "Leave Inventory = ESC key.";
+            Console.SetCursorPosition((Console.WindowWidth - equipItems.Length), 0);
+            Console.Write(equipItems);
+            Console.SetCursorPosition((Console.WindowWidth - quitInv.Length), 1);
+            Console.Write(quitInv);
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Current Stats: ");
+            this.stats.OutputStats();
+            Console.WriteLine("Experience: " + this.Experience + "/" + ExperienceRequired + "\n" + "Current Level: " + this.level + "\n\n");
+
             foreach (var piece in this.playerInventory.InventoryItems)
             {
                 string isEquipped = " ";
@@ -242,33 +258,53 @@ public class Player
                 piece.InventorySlot = i;
                 i++;
 
-                //piece.stats.OutputStats();
 
             }
 
-            Console.WriteLine("Select an item you wish to view via the corresponding #. ");
-            choice = Console.ReadLine();
-            foreach (var piece in this.playerInventory.InventoryItems)
+        while (!bIsDone)
+        {
+            if (Story.GetKey(0x45))
             {
-                int x = 0;
-                if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
+                while (true)
                 {
-                    piece.stats.OutputStats();
 
-                    if (piece.bIsEquippable && !piece.bIsEquipped)
+                    Console.WriteLine("Select an item you wish to view via the corresponding #. ");
+                    while (Console.KeyAvailable)
                     {
-                        Console.WriteLine("Would you like to equip this item? (Y/N)");
-                        if (Console.ReadLine() == "Y" && this.level >= piece.LevelRequirement) this.EquipItem(piece);
+                        Console.ReadKey(true);
                     }
-                    else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
-                    else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
-                    Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
-                    if (Console.ReadLine() == "Y") break;
-                    bIsDone = true;
-                    Map.DrawMap(this.CurrentMap, this);
+
+                    choice = Console.ReadLine();
+                    Console.SetCursorPosition(Console.CursorLeft, (Console.CursorTop - 1));
+
+                    foreach (var piece in this.playerInventory.InventoryItems)
+                    {
+                        int x = 0;
+                        if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
+                        {
+                            piece.stats.OutputStats();
+
+                            if (piece.bIsEquippable && !piece.bIsEquipped)
+                            {
+                                Console.WriteLine("Would you like to equip this item? (Y/N)");
+                                if (Console.ReadLine() == "Y" && this.level >= piece.LevelRequirement) this.EquipItem(piece);
+                            }
+                            else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
+                            else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
+                            Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
+                            if (Console.ReadLine() == "Y") goto InventoryStart;
+                            bIsDone = true;
+                            Map.DrawMap(this.CurrentMap, this);
+                        }
+                    }
+
+
                 }
-
-
+            }
+            else if (Story.GetKey(0x1B))
+            {
+                Map.DrawMap(this.CurrentMap, this);
+                return;
             }
         }
     }

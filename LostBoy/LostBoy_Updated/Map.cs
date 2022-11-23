@@ -141,6 +141,7 @@ public class Map : Player
         Console.Clear();
         player.CurrentMap = map;
         Console.SetWindowSize(((int)map.mapSize.x), ((int)map.mapSize.y));
+        Console.SetBufferSize((int)map.mapSize.x, (int)map.mapSize.y);
         Map.FillBorder();
         Map.EnemiesToScreen(map);
         Map.ScreenMovement(player, map);
@@ -178,15 +179,17 @@ public class Map : Player
                     }
                     if ((Story.GetAsyncKeyState(0x52) & 0x8000) == 0x8000)
                     {
+                        player.ResetLocation(ref map);
                         break;
                     }
                 } while (player.Health >= 0);
                 GainExperience(player, ene);
-                Console.Clear();
-                Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
-                Map.FillBorder(Map.Border);               
-                player.ResetLocation(ref map);
-                Map.EnemiesToScreen(map);
+                Map.DrawMap(map, player);
+                //Console.Clear();
+                //Console.SetWindowSize((int)map.mapSize.x, (int)map.mapSize.y);
+                //Map.FillBorder(Map.Border);               
+                //player.ResetLocation(ref map);
+                //Map.EnemiesToScreen(map);
             }
         }
 
@@ -219,7 +222,7 @@ public class Map : Player
             Enemy.Movement(map);
             Player.DoMovement(player, map, 1);
             if (Story.GetKey(0x49)) player.ViewInventory();
-            if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
+            if((Story.GetAsyncKeyState(0x24) & 0x8000) == 0x8000) // Break out with esc
             {
                 break;
             }

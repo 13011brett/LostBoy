@@ -25,13 +25,53 @@ namespace LostBoy
     
     internal class LostBoy
     {
+        // Documentation: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-deletemenu
+        private const int MF_BYCOMMAND = 0x00000000;
+
+        // Documentation: https://docs.microsoft.com/en-us/windows/win32/menurc/wm-syscommand
+        public const int SC_SIZE = 0xF000;
+        public const int SC_MINIMIZE = 0xF020;
+        public const int SC_MAXIMIZE = 0xF030;
+
+        // Documentation: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.dllimportattribute?view=netcore-3.1
+        [DllImport("user32.dll")]
+        // Documentation: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-deletemenu
+        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+
+        [DllImport("user32.dll")]
+        // Documentation: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getsystemmenu
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        // Documentation: https://docs.microsoft.com/en-us/windows/console/getconsolewindow
+        private static extern IntPtr GetConsoleWindow();
         static void Main(string[] args)
         {
+
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);        // Disable resizing
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MINIMIZE, MF_BYCOMMAND);    // Disable minimizing
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);    // Disable maximizing
+            
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Clear();
 
             Player player = new Player();
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
             Story.TimedText(Story.introduction, 1, true);
             Console.ForegroundColor = ConsoleColor.Green;
             player.GetName();
@@ -41,27 +81,8 @@ namespace LostBoy
             Map Castle = new Map(100, 50, 30);
             Map.DrawMap(Dungeon, player);
             Console.Clear();
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.ViewInventory();
+            Map.DrawMap(Castle, player);
 
-
-            Console.WriteLine(player.playerInventory.InventoryItems[0].bIsEquipped);
-            Console.WriteLine(player.stats.Armor);
-            Map.DrawMap(Dungeon, player);
             
             //Console.SetCursorPosition((Console.WindowWidth/2), (Console.WindowHeight-5));
 
