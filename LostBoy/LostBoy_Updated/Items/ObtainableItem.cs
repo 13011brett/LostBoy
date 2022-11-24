@@ -9,7 +9,7 @@ namespace LostBoy.Items
     public abstract class ObtainableItem
     {
         public  Guid ID { get; private set; } = Guid.NewGuid();
-        public ItemStats stats { get; set; }
+        public virtual ItemStats stats { get; set; }
         public int InventorySlot { get; set; }
         public int LevelRequirement { get; protected set; }
         public string Name { get; set; }
@@ -33,6 +33,20 @@ namespace LostBoy.Items
             {
                 this.bIsEquippable = true;
             }
+        }
+        public void UseItem(Player p)
+        {
+            p.stats.Health += this.stats.Health;
+
+
+            this.Quantity--;
+            Console.WriteLine("Quantity = " + this.Quantity);
+            if (this.Quantity <= 0)
+            {
+                
+                p.playerInventory.InventoryItems.Remove(this);
+            }
+
         }
         public enum ItemSlot
         {

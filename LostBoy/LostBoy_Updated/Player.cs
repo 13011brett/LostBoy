@@ -289,13 +289,27 @@ public class Player
                                 if (Console.ReadLine() == "Y" && this.level >= piece.stats.RequiredLevel) this.EquipItem(piece);
                                 if (this.level < piece.stats.RequiredLevel) Console.WriteLine("This item cannot be equipped.");
                             }
-                            else if (piece.bIsEquippable && piece.bIsEquippable) Console.WriteLine("Item is already equipped!");
-                            else if (!piece.bIsEquippable) Console.WriteLine("You cannot equip this item.");
+                            else if (piece.bIsEquippable && piece.bIsEquipped) Console.WriteLine("Item is already equipped!");
+                            else if (!piece.bIsEquippable && !piece.bIsConsumable) Console.WriteLine("You cannot equip this item.");
+                            else if (piece.bIsConsumable)
+                            {
+                                if(this.level >= piece.stats.RequiredLevel)
+                                {
+                                    Console.WriteLine("Would you like to use this item? (Y/N)");
+                                    if (Console.ReadLine() == "Y" && this.level >= piece.stats.RequiredLevel) piece.UseItem(this);
+                                    
+                                }
+                                else
+                                {
+                                    Console.WriteLine("You cannot use this item. ");
+                                }
+                            }
                             Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
                             if (Console.ReadLine() == "Y") goto InventoryStart;
                             bIsDone = true;
                             Map.DrawMap(this.CurrentMap, this);
                         }
+                        
                     }
 
 

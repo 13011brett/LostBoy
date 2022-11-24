@@ -9,7 +9,7 @@ namespace LostBoy.Items
 {
     public class Stats : ICloneable
     {
-        public float Health { get; set; } = 0;
+        public float Health { get; set; } = -1;
         public float Mana { get; set; } = 0;
         public float MovementModifier { get; set; } = 0;
         public int AttackPower { get; set; } = 0;
@@ -29,7 +29,7 @@ namespace LostBoy.Items
 
         public virtual void OutputStats()
         {
-            if(!(this is ItemStats))Console.WriteLine("Health = " + Health);
+            if(Health > -1)Console.WriteLine("Health = " + Health);
             if (Mana != 0) Console.WriteLine("Mana = " + Mana);
             if (AttackPower != 0) Console.WriteLine("Attack Power Rating = " + AttackPower);
             if(Armor != 0) Console.WriteLine("Armor = " + Armor);
@@ -58,9 +58,46 @@ namespace LostBoy.Items
             Console.Write("\n\n");
         }
 
-
+    }
+    public sealed class ConsumableStats : Stats
+    {
+        public override void OutputStats()
+        {
+            if (this.Health > 0) Console.WriteLine("Health Modified: " + this.Health);
+            if(this.Mana > 0) Console.WriteLine("Mana Modified: " + this.Mana);
+            base.OutputStats();
+        }
 
     }
+
+    public class ConsumableStatsBuilder
+    {
+        private ConsumableStats buildee;
+
+        public virtual ConsumableStatsBuilder SetHealth(float newHp)
+        {
+            this.buildee.Health = newHp;
+            return this;
+
+        }
+        public virtual ConsumableStatsBuilder SetAPBase(int ap)
+        {
+            this.buildee.AttackPower = ap;
+            return this;
+        }
+
+
+        public ConsumableStats? Build()
+        {
+            var shadow = this.buildee.Clone() as ConsumableStats;
+            this.buildee = new ConsumableStats();
+            return shadow;
+        }
+        public ConsumableStatsBuilder() => this.buildee = new ConsumableStats();
+    }
+
+
+
     public class ItemStatsBuilder 
     {
         private ItemStats buildee;
