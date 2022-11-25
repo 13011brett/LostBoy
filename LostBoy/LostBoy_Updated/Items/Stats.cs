@@ -31,7 +31,8 @@ namespace LostBoy.Items
 
         public virtual void OutputStats()
         {
-            if(Health > -1)Console.Write("Health = " + Health);
+            if(this is ItemStats && Health > -1) Console.WriteLine("Health = " + Health);
+            if (!(this is ItemStats) && Health > -1)Console.Write("Health = " + Health);
             if (MaxHealth > 0) Console.Write("/" + MaxHealth + "\n");
             if (Mana != 0) Console.WriteLine("Mana = " + Mana);
             if (AttackPower != 0) Console.WriteLine("Attack Power Rating = " + AttackPower);

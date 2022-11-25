@@ -25,7 +25,8 @@ namespace LostBoy.Items
         {
             
             this.stats = new ItemStatsBuilder()
-                .SetArmor(Player.RandomNumber(100, 255))
+                .SetArmor(Player.RandomNumber(50, 255))
+                .SetHealth(Player.RandomNumber(50, 255))
                 .SetLevelReq(2)
                 .Build();
             this.Name = "Chainmail" + this.stats.Affix;

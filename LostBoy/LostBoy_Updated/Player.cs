@@ -190,6 +190,7 @@ public class Player
                 }
                 //UnEquipItem()
                 this.stats.Health -= piece.stats.Health;
+                this.stats.MaxHealth -= piece.stats.Health;
                 this.stats.Strength -= piece.stats.Strength;
                 this.stats.Dexterity -= piece.stats.Dexterity;
                 this.stats.Vitality -= piece.stats.Vitality;
@@ -206,6 +207,7 @@ public class Player
         if (item.bIsEquippable && !item.bIsEquipped) //Kinda works, probably should be improved on. 
         {
             this.stats.Health += item.stats.Health;
+            this.stats.MaxHealth += item.stats.Health;
             this.stats.Strength += item.stats.Strength;
             this.stats.Dexterity += item.stats.Dexterity;
             this.stats.Vitality += item.stats.Vitality;
@@ -288,8 +290,8 @@ public class Player
 
                             if (piece.bIsEquippable && !piece.bIsEquipped)
                             {
-                                Console.WriteLine("Would you like to equip this item? (Y/N)");
-                                if (Console.ReadLine() == "Y" && this.level >= piece.stats.RequiredLevel) this.EquipItem(piece);
+                                Console.WriteLine("Would you like to equip this item? (y/n)");
+                                if (Console.ReadLine() == "y" && this.level >= piece.stats.RequiredLevel) this.EquipItem(piece);
                                 if (this.level < piece.stats.RequiredLevel) Console.WriteLine("This item cannot be equipped.");
                             }
                             else if (piece.bIsEquippable && piece.bIsEquipped) Console.WriteLine("Item is already equipped!");
@@ -298,8 +300,8 @@ public class Player
                             {
                                 if(this.level >= piece.stats.RequiredLevel)
                                 {
-                                    Console.WriteLine("Would you like to use this item? (Y/N)");
-                                    if (Console.ReadLine() == "Y" && this.level >= piece.stats.RequiredLevel) piece.UseItem(this);
+                                    Console.WriteLine("Would you like to use this item? (y/n)");
+                                    if (Console.ReadLine() == "y" && this.level >= piece.stats.RequiredLevel) piece.UseItem(this);
                                     
                                 }
                                 else
@@ -307,8 +309,8 @@ public class Player
                                     Console.WriteLine("You cannot use this item. ");
                                 }
                             }
-                            Console.WriteLine("\n\n" + "Would you like to view other items? (Y/N)");
-                            if (Console.ReadLine() == "Y") goto InventoryStart;
+                            Console.WriteLine("\n\n" + "Would you like to view other items? (y/n)");
+                            if (Console.ReadLine() == "y") goto InventoryStart;
                             bIsDone = true;
                             Map.DrawMap(this.CurrentMap, this);
                         }
@@ -318,7 +320,7 @@ public class Player
 
                 }
             }
-            else if (Story.GetKey(0x1B))
+            else if (Story.GetKey(0x1B)) // Esc out of the inventory.
             {
                 Map.DrawMap(this.CurrentMap, this);
                 return;
