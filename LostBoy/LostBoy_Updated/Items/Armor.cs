@@ -23,11 +23,12 @@ namespace LostBoy.Items
     {
         public Chainmail()
         {
-            this.Name = "Chainmail";
+            
             this.stats = new ItemStatsBuilder()
                 .SetArmor(Player.RandomNumber(100, 255))
                 .SetLevelReq(2)
                 .Build();
+            this.Name = "Chainmail" + this.stats.Affix;
             this.bIsEquippable = true;
             this.itemslot = ItemSlot.Chest;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace LostBoy.Items
 
 
             this.Quantity--;
-            Console.WriteLine("Quantity = " + this.Quantity);
+            Console.WriteLine("Quantity Left = " + this.Quantity);
             if (this.Quantity <= 0)
             {
                 
@@ -50,6 +51,7 @@ namespace LostBoy.Items
             }
 
         }
+
         public enum ItemSlot
         {
             Head,

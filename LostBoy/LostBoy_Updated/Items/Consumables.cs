@@ -25,12 +25,14 @@ namespace LostBoy.Items
     {
            public Potion()
         {
-            this.Name = "Potion";
+            
             this.Quantity = 1;
             this.QuantityMax = 10;
             this.stats = new ItemStatsBuilder()
                 .SetHealth(1000)
+                .SetArmor(100)
                 .Build();
+            this.Name = "Potion" + this.stats.Affix;
         }
     }
 }

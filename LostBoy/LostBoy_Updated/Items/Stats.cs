@@ -11,6 +11,7 @@ namespace LostBoy.Items
     {
         public float Health { get; set; } = -1;
         public float MaxHealth { get; set; }
+        public string Affix { get; protected set; }
         public float Mana { get; set; } = 0;
         public float MovementModifier { get; set; } = 0;
         public int AttackPower { get; set; } = 0;
@@ -39,6 +40,26 @@ namespace LostBoy.Items
             if(Dexterity != 0) Console.WriteLine("Dexterity = " + Dexterity);
             if(Vitality != 0) Console.WriteLine("Vitality = " + Vitality);
             if (Intelligence != 0) Console.WriteLine("Intelligence = " + Intelligence);
+        }
+        public void GetAffix()
+        {
+            float BiggestNumber = 0;
+            if (this.Health > BiggestNumber)
+            {
+                this.Affix = " of Health";
+                BiggestNumber = this.Health;
+            }
+            if (this.Mana > BiggestNumber)
+            {
+                this.Affix = " of Mana";
+                BiggestNumber = this.Mana;
+            }
+            if (this.Armor > BiggestNumber)
+            {
+                this.Affix = " of Defense";
+                BiggestNumber = this.Armor;
+
+            }
         }
 
 
@@ -131,6 +152,7 @@ namespace LostBoy.Items
 
         public ItemStats? Build()
         {
+            this.buildee.GetAffix();
             var shadow = this.buildee.Clone() as ItemStats;
             this.buildee = new ItemStats();
             return shadow;
@@ -178,6 +200,7 @@ namespace LostBoy.Items
 
 
     }
+
     public interface IStatsBuilder{ // Could not get this to work with a fluent builder. Works without it 
         void SetHealth(float newHP);
         void SetAPBase(int ap);
