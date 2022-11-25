@@ -36,7 +36,9 @@ namespace LostBoy.Items
         }
         public void UseItem(Player p)
         {
-            p.stats.Health += this.stats.Health;
+
+            if (p.stats.Health + this.stats.Health >= p.stats.MaxHealth) p.stats.Health = p.stats.MaxHealth;
+            else p.stats.Health += this.stats.Health;
 
 
             this.Quantity--;

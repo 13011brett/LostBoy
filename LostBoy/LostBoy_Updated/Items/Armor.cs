@@ -14,7 +14,7 @@ namespace LostBoy.Items
 
         public Armor()
         {
-
+            this.QuantityMax = 1;
         }
 
     }

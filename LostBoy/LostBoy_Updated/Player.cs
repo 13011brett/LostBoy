@@ -249,16 +249,19 @@ public class Player
             this.stats.OutputStats();
             Console.WriteLine("Experience: " + this.Experience + "/" + ExperienceRequired + "\n" + "Current Level: " + this.level + "\n\n");
 
-            foreach (var piece in this.playerInventory.InventoryItems)
-            {
-                string isEquipped = " ";
-                if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
-                Console.WriteLine(piece.Name + "\t " + i + isEquipped);
-                piece.InventorySlot = i;
-                i++;
+        foreach (var piece in this.playerInventory.InventoryItems)
+        {
+            string isEquipped = " ";
+            string q = " ";
+            if(piece.Quantity > 1) q = "\tQuantity:" + piece.Quantity.ToString();
+                
+            if (piece.bIsEquipped) isEquipped = "\t (Equipped)";
+            Console.WriteLine(piece.Name  + "\t " + i + isEquipped + q);
+            piece.InventorySlot = i;
+            i++;
 
 
-            }
+        }
 
         while (!bIsDone)
         {
