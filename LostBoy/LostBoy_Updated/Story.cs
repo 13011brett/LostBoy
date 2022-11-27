@@ -8,8 +8,9 @@ public class Story // Not sure if making a story object is better than instantia
     public static extern ushort GetAsyncKeyState(int vKey); // Used for getting keys pressed.
 
 
-
-    public static string introduction = "On a moonlit night, unlike any other, you stand outside of a breathtaking castle. You take in the air as you stare at the water that separates the land. " +
+    public static string introduction = "#   ___        ________   ________   _________        ________   ________       ___    ___ \r\n#  |\\  \\      |\\   __  \\ |\\   ____\\ |\\___   ___\\     |\\   __  \\ |\\   __  \\     |\\  \\  /  /|\r\n#  \\ \\  \\     \\ \\  \\|\\  \\\\ \\  \\___|_\\|___ \\  \\_|     \\ \\  \\|\\ /_\\ \\  \\|\\  \\    \\ \\  \\/  / /\r\n#   \\ \\  \\     \\ \\  \\\\\\  \\\\ \\_____  \\    \\ \\  \\       \\ \\   __  \\\\ \\  \\\\\\  \\    \\ \\    / / \r\n#    \\ \\  \\____ \\ \\  \\\\\\  \\\\|____|\\  \\    \\ \\  \\       \\ \\  \\|\\  \\\\ \\  \\\\\\  \\    \\/  /  /  \r\n#     \\ \\_______\\\\ \\_______\\ ____\\_\\  \\    \\ \\__\\       \\ \\_______\\\\ \\_______\\ __/  / /    \r\n#      \\|_______| \\|_______||\\_________\\    \\|__|        \\|_______| \\|_______||\\___/ /     \r\n#                           \\|_________|                                      \\|___|/      \r\n#                                                                                          \r\n";
+    public static string introduction2 = "Please Select an option! \n\n\n1. Start a New Game.\n2. Load a Saved Game.\n3. View Controls.\n4. Exit the game.";
+    public static string introduction3 = "On a moonlit night, unlike any other, you stand outside of a breathtaking castle. You take in the air as you stare at the water that separates the land. " +
         "\"What a beautiful sight! I wonder what this castle was like before it was abandoned..\" You think to yourself. As soon as that thought finishes playing in your mind, a sudden chill " +
         "goes throughout your body, completely freezing you to a a halt. People pass by you as you stand there in shock, not able to move a muscle, other than your eyes. Your attention is quickly " +
         "diverted to the sight of a malformed castle, being tarnished by a fantastical beast. You can't believe your eyes; you faint in almost an instant... \n\n\n\n " +
@@ -25,9 +26,51 @@ public class Story // Not sure if making a story object is better than instantia
     {
         Console.Write("\nAh I see, what a lovely name.. Now how did you end up here " + name + "?"); 
     } 
+    public static void DoIntro()
+    {
+        bool FirstTime = true;
+        while (true)
+        {
+            Console.Clear();
+            if (FirstTime)
+            {
+                Story.TimedText(introduction + introduction2 + "\n");
+                FirstTime = false;
+            }
+            else Console.WriteLine(introduction + introduction2 + "\n");
 
+            switch (ChoiceInt())
+            {
 
-    public static void TimedText(string inText, int inSpeed = 50, bool clearConsole = false) // This allows for text to be timed, need to make a skippable feature into this as well, and make it print out the text as a whole if so.
+                case 1:
+                    Story.TimedText(introduction3, 10, true);
+                    return;
+                case 2:
+                    return;
+                case 3:
+                    return;
+                case 4:
+                    return;
+                default:
+                    Console.WriteLine("Please input a valid choice.");
+                    System.Threading.Thread.Sleep(1500);
+                    break;
+            }
+        }
+
+        
+    }
+
+    public static int ChoiceInt()
+    {
+        string choice;
+        int x = 0;
+        choice = Console.ReadLine();
+        if (int.TryParse(choice, out x)) return int.Parse(choice);
+        else return 0;
+        
+    }
+    public static void TimedText(string inText, int inSpeed = 10, bool clearConsole = false) // This allows for text to be timed, need to make a skippable feature into this as well, and make it print out the text as a whole if so.
     {
 
         for (int i = 1; i <= inText.Length; i++)

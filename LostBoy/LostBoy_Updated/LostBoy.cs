@@ -53,8 +53,9 @@ namespace LostBoy
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);    // Disable maximizing
             
             Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.Clear();
+            Console.SetWindowSize((Console.LargestWindowWidth / 2), (Console.LargestWindowHeight - 10));
 
             Player player = new Player();
             player.playerInventory.AddItem(new Chainmail(), 1);
@@ -64,7 +65,8 @@ namespace LostBoy
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Chainmail(), 1);
             player.playerInventory.AddItem(new Potion(), 2);
-            Story.TimedText(Story.introduction, 1, true);
+            Story.DoIntro();
+            //Story.TimedText(Story.introduction, 1, true);
             Console.ForegroundColor = ConsoleColor.Green;
             player.GetName();
             Story.afterIntro(player.Name);
