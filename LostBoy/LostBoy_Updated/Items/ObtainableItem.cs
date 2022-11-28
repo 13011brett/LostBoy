@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace LostBoy.Items
 {
-    public abstract class ObtainableItem
+    public class ObtainableItem
     {
-        public  Guid ID { get; private set; } = Guid.NewGuid();
+        public  Guid ID { get; set; } = Guid.NewGuid();
         public virtual ItemStats stats { get; set; }
         public int InventorySlot { get; set; }
         public int LevelRequirement { get; protected set; }
@@ -28,6 +28,12 @@ namespace LostBoy.Items
             //this.stats.Health = 100;
             //this.ID = Guid.NewGuid();
         }
+
+        public ObtainableItem(Guid id, int lvlreq, int quality, bool isEquipped, bool isEquipabble, bool isConsumable, int QuantityMax)
+        {
+
+        }
+
         public void ProperLevel(Player p)
         {
             if (p.level >= this.LevelRequirement)

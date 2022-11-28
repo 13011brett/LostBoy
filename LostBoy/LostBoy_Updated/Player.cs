@@ -24,11 +24,6 @@ public class Player
     public char icon { get; protected set; } = 'p';
     protected ConsoleColor color;
     public Map CurrentMap { get; set; }
-    //public float Health
-    //{
-    //    get { return health; }
-    //    set { health = value; }
-    //}
     public string Name
     {
         get { return name; }
@@ -71,10 +66,71 @@ public class Player
 
 
     }
-     
 
+    private Player(float hp, float maxHP, int myArmor, string myName)
+    {
+        this.location = new Vec3() { x = 0, y = 0, z = 0 };
+        this.name = myName;
+        this.stats = new StatsBuilder()
+            .SetHealth(hp)
+            .SetArmor(myArmor)
+            .Build();
+        this.stats.MaxHealth = maxHP;
+    }
+
+    public static Player CreatePlayerFromXmlString(string xmlPlayerData)
+    {
+        XmlDocument playerData = new XmlDocument();
         
-    
+        playerData.LoadXml(xmlPlayerData);
+        float currentHealth = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/CurrentHealth").InnerText);
+        float maxHealth = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/MaxHealth").InnerText);
+        int pLevel = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/Level").InnerText);
+        string pName = Convert.ToString(playerData.SelectSingleNode("/Player/Stats/").InnerText);
+        int pArmor = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/Armor").InnerText);
+        int exp = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/Experience").InnerText);
+        int expReq = Convert.ToInt32(playerData.SelectSingleNode("/Player/Stats/ExperienceRequired").InnerText);
+        int map_x = Convert.ToInt32(playerData.SelectSingleNode("/Player/Map/MapX").InnerText);
+        int map_y = Convert.ToInt32(playerData.SelectSingleNode("/Player/Map/MapY").InnerText);
+        int mapDifficulty = Convert.ToInt32(playerData.SelectSingleNode("/Player/Map/MapDifficulty").InnerText);
+        Player p = new Player (currentHealth, maxHealth, pArmor, pName);
+        p.CurrentMap = new Map(map_x, map_y, mapDifficulty);
+
+        foreach(XmlNode node in playerData.SelectNodes("/Player/InventoryItems/InventoryItem"))
+        {
+            // This portion may not be required, can be regened when rebuilding the item.
+            Guid id = Guid.Parse(Convert.ToString(node.Attributes["ID"].Value));
+            string name = Convert.ToString(node.Attributes["Name"].Value);
+            int itemSlot = Convert.ToInt32(node.Attributes["ItemSlot"].Value);
+            bool isEquippable = Convert.ToBoolean(node.Attributes["IsEquippable"].Value);
+            bool isConsumable = Convert.ToBoolean(node.Attributes["IsConsumable"].Value);
+            bool isEquipped = Convert.ToBoolean(node.Attributes["IsEquipped"].Value);
+            int invSlot = Convert.ToInt32(node.Attributes["InventorySlot"].Value);
+            int quantity = Convert.ToInt32(node.Attributes["Quantity"].Value);
+            int quantityMax = Convert.ToInt32(node.Attributes["MaxQuantity"].Value);
+            //-----------------//Begin of Stats
+            int ILevelReq = Convert.ToInt32(node.Attributes["LevelRequired"].Value);
+            int iStrength = Convert.ToInt32(node.Attributes["IStrength"].Value);
+            int iArmor = Convert.ToInt32(node.Attributes["IArmor"].Value);
+            int iHealth = Convert.ToInt32(node.Attributes["IHealth"].Value);
+            Type type = Type.GetType(Convert.ToString(node.Attributes["Type"].Value));
+            ObtainableItem t = new ObtainableItem();
+            Convert.ChangeType(t, type);
+            t.ID = id;
+            t.Name = name;
+            t.itemslot = itemSlot;
+
+
+            p.playerInventory.AddItem(new ObtainableItem(), quantity);
+            
+        }
+
+        return p;
+    }
+
+
+
+
 
     public void GetName()
     {
@@ -289,6 +345,7 @@ public class Player
                         {
                             piece.stats.OutputStats();
                             Console.WriteLine(this.ToXmlString());
+                            Console.WriteLine(piece.Type);
 
                             if (piece.bIsEquippable && !piece.bIsEquipped)
                             {
@@ -341,6 +398,10 @@ public class Player
         XmlNode currentMap = playerData.CreateElement("Map");
         player.AppendChild(currentMap);
 
+        XmlNode currentName = playerData.CreateElement("Name");
+        currentName.AppendChild(playerData.CreateTextNode(this.Name));
+        stats.AppendChild(currentName);
+
         XmlNode currentHealth = playerData.CreateElement("CurrentHealth");
         currentHealth.AppendChild(playerData.CreateTextNode(this.stats.Health.ToString()));
         stats.AppendChild(currentHealth);
@@ -348,6 +409,10 @@ public class Player
         XmlNode maxHealth = playerData.CreateElement("MaxHealth");
         maxHealth.AppendChild(playerData.CreateTextNode(this.stats.MaxHealth.ToString()));
         stats.AppendChild(maxHealth);
+
+        XmlNode currentLevel = playerData.CreateElement("Level");
+        currentLevel.AppendChild(playerData.CreateTextNode(this.level.ToString())); 
+        stats.AppendChild(currentLevel);
 
         XmlNode currentArmor = playerData.CreateElement("Armor");
         currentArmor.AppendChild(playerData.CreateTextNode(this.stats.Armor.ToString()));
@@ -369,11 +434,17 @@ public class Player
         mapY.AppendChild(playerData.CreateTextNode(this.CurrentMap.MapSize.y.ToString()));
         currentMap.AppendChild(mapY);
 
+        XmlNode mapDiff = playerData.CreateElement("MapDifficulty");
+        mapDiff.AppendChild(playerData.CreateTextNode(this.CurrentMap.MapDifficulty.ToString()));
+        currentMap.AppendChild(mapDiff);
+
         XmlNode inventoryItems = playerData.CreateElement("InventoryItems");
         player.AppendChild(inventoryItems);
 
         foreach(var item in playerInventory.InventoryItems)
         {
+
+            //Creation of each item in the inventory.
             XmlNode inventoryItem = playerData.CreateElement("InventoryItem");
 
             XmlAttribute idAttribute = playerData.CreateAttribute("ID");
@@ -383,6 +454,10 @@ public class Player
             XmlAttribute nameAttribute = playerData.CreateAttribute("Name");
             nameAttribute.Value = item.Name.ToString();
             inventoryItem.Attributes.Append(nameAttribute);
+
+            XmlAttribute itemSlot = playerData.CreateAttribute("ItemSlot");
+            itemSlot.Value = Convert.ToInt32(item.itemslot).ToString();
+            inventoryItem.Attributes.Append(itemSlot);
 
             XmlAttribute bEquipAttribute = playerData.CreateAttribute("IsEquipabble");
             bEquipAttribute.Value = item.bIsEquippable.ToString();
@@ -408,29 +483,32 @@ public class Player
             quantityMax.Value = item.QuantityMax.ToString();
             inventoryItem.Attributes.Append(quantityMax);
 
-            XmlAttribute itemSlot = playerData.CreateAttribute("ItemSlot");
-            itemSlot.Value = item.itemslot.ToString();
-            inventoryItem.Attributes.Append(itemSlot);
+            XmlAttribute iType = playerData.CreateAttribute("ItemType");
+            iType.Value = item.GetType().ToString();
+            inventoryItem.Attributes.Append(iType);
 
 
-            XmlNode itemStats = playerData.CreateElement("ItemStats");
-            inventoryItem.AppendChild(itemStats);
+            //Stats of items
+            //XmlNode itemStats = playerData.CreateElement("ItemStats");
+            //inventoryItem.AppendChild(itemStats);
 
             XmlAttribute lvlReqAttribute = playerData.CreateAttribute("LevelRequired");
             lvlReqAttribute.Value = item.stats.RequiredLevel.ToString();
-            itemStats.Attributes.Append(lvlReqAttribute);
+            inventoryItem.Attributes.Append(lvlReqAttribute);
 
             XmlAttribute strengthAtt = playerData.CreateAttribute("IStrength");
             strengthAtt.Value = item.stats.Strength.ToString();
-            itemStats.Attributes.Append(strengthAtt);
+            inventoryItem.Attributes.Append(strengthAtt);
 
             XmlAttribute armorAtt = playerData.CreateAttribute("IArmor");
             armorAtt.Value = item.stats.Armor.ToString();
-            itemStats.Attributes.Append(armorAtt);
+            inventoryItem.Attributes.Append(armorAtt);
 
             XmlAttribute vitAtt = playerData.CreateAttribute("IHealth");
             vitAtt.Value = item.stats.Health.ToString();
-            itemStats.Attributes.Append(vitAtt);
+            inventoryItem.Attributes.Append(vitAtt);
+
+            
 
             inventoryItems.AppendChild(inventoryItem);
         }
