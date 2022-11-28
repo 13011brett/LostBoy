@@ -3,6 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using LostBoy.Items;
 using LostBoy;
+using System.Xml;
 using System.Reflection.Emit;
 
 public class Player
@@ -287,6 +288,7 @@ public class Player
                         if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
                         {
                             piece.stats.OutputStats();
+                            Console.WriteLine(this.ToXmlString());
 
                             if (piece.bIsEquippable && !piece.bIsEquipped)
                             {
@@ -326,6 +328,114 @@ public class Player
                 return;
             }
         }
+    }
+
+    public string ToXmlString()
+    {
+        XmlDocument playerData = new XmlDocument();
+        // Top level XML Node ^
+        XmlNode player = playerData.CreateElement("Player");
+        playerData.AppendChild(player);
+        XmlNode stats = playerData.CreateElement("Stats");
+        player.AppendChild(stats);
+        XmlNode currentMap = playerData.CreateElement("Map");
+        player.AppendChild(currentMap);
+
+        XmlNode currentHealth = playerData.CreateElement("CurrentHealth");
+        currentHealth.AppendChild(playerData.CreateTextNode(this.stats.Health.ToString()));
+        stats.AppendChild(currentHealth);
+
+        XmlNode maxHealth = playerData.CreateElement("MaxHealth");
+        maxHealth.AppendChild(playerData.CreateTextNode(this.stats.MaxHealth.ToString()));
+        stats.AppendChild(maxHealth);
+
+        XmlNode currentArmor = playerData.CreateElement("Armor");
+        currentArmor.AppendChild(playerData.CreateTextNode(this.stats.Armor.ToString()));
+        stats.AppendChild(currentArmor);
+
+        XmlNode currentExp = playerData.CreateElement("Experience");
+        currentExp.AppendChild(playerData.CreateTextNode(this.Experience.ToString()));
+        stats.AppendChild(currentExp);
+
+        XmlNode maxExp = playerData.CreateElement("ExperienceRequired");
+        maxExp.AppendChild(playerData.CreateTextNode(this.ExperienceRequired.ToString()));
+        stats.AppendChild(maxExp);
+
+        XmlNode mapX = playerData.CreateElement("MapX");
+        mapX.AppendChild(playerData.CreateTextNode(this.CurrentMap.MapSize.x.ToString()));
+        currentMap.AppendChild(mapX);
+
+        XmlNode mapY = playerData.CreateElement("MapY");
+        mapY.AppendChild(playerData.CreateTextNode(this.CurrentMap.MapSize.y.ToString()));
+        currentMap.AppendChild(mapY);
+
+        XmlNode inventoryItems = playerData.CreateElement("InventoryItems");
+        player.AppendChild(inventoryItems);
+
+        foreach(var item in playerInventory.InventoryItems)
+        {
+            XmlNode inventoryItem = playerData.CreateElement("InventoryItem");
+
+            XmlAttribute idAttribute = playerData.CreateAttribute("ID");
+            idAttribute.Value = item.ID.ToString();
+            inventoryItem.Attributes.Append(idAttribute);
+
+            XmlAttribute nameAttribute = playerData.CreateAttribute("Name");
+            nameAttribute.Value = item.Name.ToString();
+            inventoryItem.Attributes.Append(nameAttribute);
+
+            XmlAttribute bEquipAttribute = playerData.CreateAttribute("IsEquipabble");
+            bEquipAttribute.Value = item.bIsEquippable.ToString();
+            inventoryItem.Attributes.Append(bEquipAttribute);
+
+            XmlAttribute bConsumableAttribute = playerData.CreateAttribute("IsConsumable");
+            bConsumableAttribute.Value = item.bIsConsumable.ToString();
+            inventoryItem.Attributes.Append(bConsumableAttribute);
+
+            XmlAttribute bIsEquipppedAttribute = playerData.CreateAttribute("IsEquipped");
+            bIsEquipppedAttribute.Value = item.bIsEquipped.ToString();
+            inventoryItem.Attributes.Append(bIsEquipppedAttribute);
+
+            XmlAttribute inventorySlot = playerData.CreateAttribute("InventorySlot");
+            inventorySlot.Value = item.InventorySlot.ToString();
+            inventoryItem.Attributes.Append(inventorySlot);
+
+            XmlAttribute quantity = playerData.CreateAttribute("Quantity");
+            quantity.Value = item.Quantity.ToString();
+            inventoryItem.Attributes.Append(quantity);
+
+            XmlAttribute quantityMax = playerData.CreateAttribute("MaxQuantity");
+            quantityMax.Value = item.QuantityMax.ToString();
+            inventoryItem.Attributes.Append(quantityMax);
+
+            XmlAttribute itemSlot = playerData.CreateAttribute("ItemSlot");
+            itemSlot.Value = item.itemslot.ToString();
+            inventoryItem.Attributes.Append(itemSlot);
+
+
+            XmlNode itemStats = playerData.CreateElement("ItemStats");
+            inventoryItem.AppendChild(itemStats);
+
+            XmlAttribute lvlReqAttribute = playerData.CreateAttribute("LevelRequired");
+            lvlReqAttribute.Value = item.stats.RequiredLevel.ToString();
+            itemStats.Attributes.Append(lvlReqAttribute);
+
+            XmlAttribute strengthAtt = playerData.CreateAttribute("IStrength");
+            strengthAtt.Value = item.stats.Strength.ToString();
+            itemStats.Attributes.Append(strengthAtt);
+
+            XmlAttribute armorAtt = playerData.CreateAttribute("IArmor");
+            armorAtt.Value = item.stats.Armor.ToString();
+            itemStats.Attributes.Append(armorAtt);
+
+            XmlAttribute vitAtt = playerData.CreateAttribute("IHealth");
+            vitAtt.Value = item.stats.Health.ToString();
+            itemStats.Attributes.Append(vitAtt);
+
+            inventoryItems.AppendChild(inventoryItem);
+        }
+
+        return playerData.InnerXml;
     }
 
 

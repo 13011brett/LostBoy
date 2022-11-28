@@ -71,7 +71,7 @@ namespace LostBoy
             player.GetName();
             Story.afterIntro(player.Name);
             
-            Map Dungeon = new Map(200, 100, 10); // Testing Map One
+            Map Dungeon = new Map(200, 20, 10); // Testing Map One
             Map Castle = new Map(100, 50, 30);
             Map.DrawMap(Dungeon, player);
             Console.Clear();
