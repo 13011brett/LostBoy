@@ -14,7 +14,7 @@ namespace LostBoy.Items
         public int InventorySlot { get; set; }
         public int LevelRequirement { get; protected set; }
         public string Name { get; set; }
-        public string Type { get; protected set; }
+        //public string Type { get; protected set; }
         public bool bIsEquippable { get; protected set; }
         public bool bIsEquipped { get; set; } = false;
         public bool bIsConsumable { get; protected set; }
@@ -29,9 +29,22 @@ namespace LostBoy.Items
             //this.ID = Guid.NewGuid();
         }
 
-        public ObtainableItem(Guid id, int lvlreq, int quality, bool isEquipped, bool isEquipabble, bool isConsumable, int QuantityMax)
+        public ObtainableItem(Guid id, int lvlreq, int quality, bool isEquipped, bool isEquipabble, bool isConsumable, ItemSlot itemslot,int quantity, int quantityMax, float hp, int armor)
         {
-
+            this.ID = id;
+            this.LevelRequirement = lvlreq;
+            this.Quality = quality;
+            this.bIsEquipped = isEquipped;
+            this.bIsEquippable = isEquipabble;
+            this.bIsConsumable = isConsumable;
+            this.itemslot = itemslot;
+            this.Quantity = quantity;
+            this.QuantityMax = quantityMax;
+            this.stats = new ItemStatsBuilder()
+                .SetLevelReq(lvlreq)
+                .SetHealth(hp)
+                .SetArmor(armor)
+                .Build();
         }
 
         public void ProperLevel(Player p)

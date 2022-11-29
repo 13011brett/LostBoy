@@ -58,18 +58,17 @@ namespace LostBoy
             Console.SetWindowSize((Console.LargestWindowWidth / 2), (Console.LargestWindowHeight - 10));
 
             Player player = new Player();
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Chainmail(), 1);
-            player.playerInventory.AddItem(new Potion(), 2);
-            Story.DoIntro();
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Chainmail(), 1);
+            //player.playerInventory.AddItem(new Potion(), 2);
+            Story.DoIntro(ref player);
             //Story.TimedText(Story.introduction, 1, true);
             Console.ForegroundColor = ConsoleColor.Green;
-            player.GetName();
-            Story.afterIntro(player.Name);
+
             
             Map Dungeon = new Map(200, 20, 10); // Testing Map One
             Map Castle = new Map(100, 50, 30);

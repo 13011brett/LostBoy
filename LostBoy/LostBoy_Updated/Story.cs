@@ -1,5 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using System;
+using System.Xml;
+using System.IO;
+using System.Numerics;
 
 public class Story // Not sure if making a story object is better than instantiating within a player object. Just didn't want to do this everytime or have this derived in other classes.
 {
@@ -26,7 +29,7 @@ public class Story // Not sure if making a story object is better than instantia
     {
         Console.Write("\nAh I see, what a lovely name.. Now how did you end up here " + name + "?"); 
     } 
-    public static void DoIntro()
+    public static void DoIntro(ref Player p)
     {
         bool FirstTime = true;
         while (true)
@@ -44,8 +47,14 @@ public class Story // Not sure if making a story object is better than instantia
 
                 case 1:
                     Story.TimedText(introduction3, 10, true);
+                    p.GetName();
+                    Story.afterIntro(p.Name);
                     return;
                 case 2:
+                    if (File.Exists("playerData.xml"))
+                    {
+                        p = Player.CreatePlayerFromXmlString(File.ReadAllText("playerData.xml"));   
+                    }
                     return;
                 case 3:
                     return;
