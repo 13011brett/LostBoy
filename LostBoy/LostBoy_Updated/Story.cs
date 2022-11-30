@@ -79,10 +79,37 @@ public class Story // Not sure if making a story object is better than instantia
                     }
                     int topMaxSelection = Console.CursorTop - i;
                     int bottomMaxSelection = (topMaxSelection + i) - 1;
-                    Console.SetCursorPosition(Console.CursorLeft, bottomMaxSelection);
-
+                    int currentSelection = bottomMaxSelection;
+                    Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                    while (true)
+                    {
+                        if(GetKey(0x26, 100) && topMaxSelection < currentSelection && bottomMaxSelection >= currentSelection)
+                        {
+                            currentSelection--;
+                            i--;
+                            Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                        }
+                        if (GetKey(0x28, 100) && topMaxSelection <= currentSelection && bottomMaxSelection > currentSelection)
+                        {
+                            currentSelection++;
+                            i++;
+                            Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                        }
+                        if (GetKey(0x0D))
+                        {
+                            foreach(var file in filesList)
+                            {
+                                if (file.choice == (i - 1))
+                                {
+                                    p = Player.CreatePlayerFromXmlString(File.ReadAllText(file.fileName));
+                                    return;
+                                }
+                                
+                            }
+                        }
+                    }
                     
-                    Console.ReadKey();
+                    //Console.ReadKey();
                     //if (File.Exists("playerData.xml"))
                     //{
                     //    p = Player.CreatePlayerFromXmlString(File.ReadAllText("playerData.xml"));   
@@ -136,7 +163,11 @@ public class Story // Not sure if making a story object is better than instantia
 
     public static bool GetKey(int Key, int timer = 0)
     {
-        if ((GetAsyncKeyState(Key) & 0x8000) == 0x8000) return true;
+        if ((GetAsyncKeyState(Key) & 0x8000) == 0x8000) {
+            System.Threading.Thread.Sleep(timer);
+            return true;
+
+                }
         return false;
     }
 

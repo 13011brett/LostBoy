@@ -530,10 +530,11 @@ public class Player
             inventoryItems.AppendChild(inventoryItem);
 
         }
-        XmlWriterSettings settings = new XmlWriterSettings();
-        settings.Indent = true;
-        XmlWriter writer = XmlWriter.Create(this.Name + ".xml", settings);
+        //XmlWriterSettings settings = new XmlWriterSettings();
+        //settings.Indent = true;
+        XmlWriter writer = XmlWriter.Create(this.Name + ".xml");
         playerData.Save(writer);
+        writer.Close();
         return playerData.InnerXml;
     }
 
