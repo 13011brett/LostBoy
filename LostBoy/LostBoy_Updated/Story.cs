@@ -3,6 +3,8 @@ using System;
 using System.Xml;
 using System.IO;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 public class Story // Not sure if making a story object is better than instantiating within a player object. Just didn't want to do this everytime or have this derived in other classes.
 {
@@ -29,6 +31,17 @@ public class Story // Not sure if making a story object is better than instantia
     {
         Console.Write("\nAh I see, what a lovely name.. Now how did you end up here " + name + "?"); 
     } 
+    protected class FileHolder
+    {
+        public string fileName;
+        public int choice;
+
+        public FileHolder(string fileName, int choice)
+        {
+            this.fileName = fileName;
+            this.choice = choice;
+        }
+    }
     public static void DoIntro(ref Player p)
     {
         bool FirstTime = true;
@@ -51,10 +64,29 @@ public class Story // Not sure if making a story object is better than instantia
                     Story.afterIntro(p.Name);
                     return;
                 case 2:
-                    if (File.Exists("playerData.xml"))
+                    Console.Clear();
+                    Console.WriteLine("Please select your save file.\n\n");
+                    var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml", SearchOption.AllDirectories);
+                    List<FileHolder> filesList = new List<FileHolder>();
+                    int i = 0;
+                    foreach(var file in files)
                     {
-                        p = Player.CreatePlayerFromXmlString(File.ReadAllText("playerData.xml"));   
+
+                        filesList.Add(new FileHolder(file, i));
+                        Console.WriteLine(i + "\t" + "Name: " + Path.GetFileNameWithoutExtension(file));
+                        i++;
+                        
                     }
+                    int topMaxSelection = Console.CursorTop - i;
+                    int bottomMaxSelection = (topMaxSelection + i) - 1;
+                    Console.SetCursorPosition(Console.CursorLeft, bottomMaxSelection);
+
+                    
+                    Console.ReadKey();
+                    //if (File.Exists("playerData.xml"))
+                    //{
+                    //    p = Player.CreatePlayerFromXmlString(File.ReadAllText("playerData.xml"));   
+                    //}
                     return;
                 case 3:
                     return;

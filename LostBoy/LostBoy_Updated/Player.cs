@@ -121,7 +121,6 @@ public class Player
             Type type = Type.GetType(Convert.ToString(node.Attributes["ItemType"].Value));
             ObtainableItem t = new ObtainableItem(id, ILevelReq, 1, isEquipped, isEquippable, isConsumable, itemSlot, quantity, quantityMax, iHealth, iArmor);
             t.Name = name;
-            typeof(type) type1
 
             t.InventorySlot = invSlot;
 
@@ -132,7 +131,7 @@ public class Player
             //t.stats.Strength = iStrength;
             //t.stats.Armor = iArmor;
             //t.stats.Health = iHealth;
-            Convert.ChangeType(t, type.GetType());
+            //Convert.ChangeType(t, type.GetType());
 
 
 
@@ -529,8 +528,12 @@ public class Player
             
 
             inventoryItems.AppendChild(inventoryItem);
+
         }
-        playerData.Save("playerData.xml");
+        XmlWriterSettings settings = new XmlWriterSettings();
+        settings.Indent = true;
+        XmlWriter writer = XmlWriter.Create(this.Name + ".xml", settings);
+        playerData.Save(writer);
         return playerData.InnerXml;
     }
 
