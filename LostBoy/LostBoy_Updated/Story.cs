@@ -58,13 +58,14 @@ public class Story // Not sure if making a story object is better than instantia
             switch (ChoiceInt())
             {
 
-                case 1:
+                case 1: // Create new save file, save is based off of the name currently. 
                     Story.TimedText(introduction3, 10, true);
                     p.GetName();
                     Story.afterIntro(p.Name);
                     return;
-                case 2:
+                case 2: // Load a saved game.
                     Console.Clear();
+                    
                     Console.WriteLine("Please select your save file.\n\n");
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml", SearchOption.AllDirectories);
                     List<FileHolder> filesList = new List<FileHolder>();
@@ -81,6 +82,7 @@ public class Story // Not sure if making a story object is better than instantia
                     int bottomMaxSelection = (topMaxSelection + i) - 1;
                     int currentSelection = bottomMaxSelection;
                     Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                    System.Threading.Thread.Sleep(300);
                     while (true)
                     {
                         if(GetKey(0x26, 100) && topMaxSelection < currentSelection && bottomMaxSelection >= currentSelection)
@@ -101,13 +103,30 @@ public class Story // Not sure if making a story object is better than instantia
                             {
                                 if (file.choice == (i - 1))
                                 {
-                                    p = Player.CreatePlayerFromXmlString(File.ReadAllText(file.fileName));
-                                    return;
+                                    try
+
+                                    { 
+
+                                        p = Player.CreatePlayerFromXmlString(File.ReadAllText(file.fileName));
+                                        return;
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Invalid Save File!");
+                                        System.Threading.Thread.Sleep(1000);
+                                        break;
+
+                                    }
+
+                                        
                                 }
                                 
                             }
+                            break;
                         }
                     }
+                    break;
                     
                     //Console.ReadKey();
                     //if (File.Exists("playerData.xml"))
@@ -116,8 +135,18 @@ public class Story // Not sure if making a story object is better than instantia
                     //}
                     return;
                 case 3:
-                    return;
+                    Console.Clear();
+                    Console.WriteLine("W = Move Forward");
+                    Console.WriteLine("\nA = Move Left");
+                    Console.WriteLine("\nS = Move Backwards");
+                    Console.WriteLine("\nD = Move Right");
+                    Console.WriteLine("\nI = View Inventory");
+                    Console.WriteLine("\nESC = Pause Game");
+                    Console.WriteLine("\nPress Any Key to Continue.");
+                    Console.ReadKey();
+                    break;
                 case 4:
+                    Environment.Exit(0);
                     return;
                 default:
                     Console.WriteLine("Please input a valid choice.");

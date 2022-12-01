@@ -222,6 +222,7 @@ public class Player
     {
         attacker.stats.Health -= attackee.damage;
         attackee.stats.Health -= attacker.damage;
+        if (attacker.stats.Health < 0) attacker.stats.Health = 0; 
     }
 
     public static void GainExperience(Player player, Player enemy)
