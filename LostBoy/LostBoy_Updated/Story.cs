@@ -74,28 +74,35 @@ public class Story // Not sure if making a story object is better than instantia
                     {
 
                         filesList.Add(new FileHolder(file, i));
-                        Console.WriteLine(i + "\t" + "Name: " + Path.GetFileNameWithoutExtension(file));
+                        Console.WriteLine("o\t" + "Name: " + Path.GetFileNameWithoutExtension(file));
                         i++;
                         
                     }
                     int topMaxSelection = Console.CursorTop - i;
                     int bottomMaxSelection = (topMaxSelection + i) - 1;
                     int currentSelection = bottomMaxSelection;
+                    int left = Console.CursorLeft;
                     Console.SetCursorPosition(Console.CursorLeft, currentSelection);
                     System.Threading.Thread.Sleep(300);
                     while (true)
                     {
                         if(GetKey(0x26, 100) && topMaxSelection < currentSelection && bottomMaxSelection >= currentSelection)
                         {
+                            Console.SetCursorPosition(left, currentSelection);
                             currentSelection--;
                             i--;
-                            Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                            Console.Write("o");
+                            Console.SetCursorPosition(left, currentSelection);
+                            Console.Write("x");
                         }
                         if (GetKey(0x28, 100) && topMaxSelection <= currentSelection && bottomMaxSelection > currentSelection)
                         {
+                            Console.SetCursorPosition(left, currentSelection);
                             currentSelection++;
-                            i++;
-                            Console.SetCursorPosition(Console.CursorLeft, currentSelection);
+                            i++; 
+                            Console.Write("o");
+                            Console.SetCursorPosition(left, currentSelection);
+                            Console.Write("x");
                         }
                         if (GetKey(0x0D))
                         {
@@ -128,12 +135,6 @@ public class Story // Not sure if making a story object is better than instantia
                     }
                     break;
                     
-                    //Console.ReadKey();
-                    //if (File.Exists("playerData.xml"))
-                    //{
-                    //    p = Player.CreatePlayerFromXmlString(File.ReadAllText("playerData.xml"));   
-                    //}
-                    return;
                 case 3:
                     Console.Clear();
                     Console.WriteLine("W = Move Forward");
@@ -146,6 +147,9 @@ public class Story // Not sure if making a story object is better than instantia
                     Console.ReadKey();
                     break;
                 case 4:
+                    Console.Clear();
+                    Console.WriteLine("Goodbye... For now.");
+                    System.Threading.Thread.Sleep(2000);
                     Environment.Exit(0);
                     return;
                 default:
