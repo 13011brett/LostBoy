@@ -248,9 +248,40 @@ public class Map : Player
             Enemy.Movement(map);
             Player.DoMovement(player, map, 1);
             if (Story.GetKey(0x49)) player.ViewInventory();
-            if((Story.GetAsyncKeyState(0x24) & 0x8000) == 0x8000) // Break out with esc
+            if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
             {
-                break;
+                Console.Clear();
+                int x = 0;
+                Console.WriteLine("1: \t Save Game" + "\n2: \t Quit Game" + "\n3: \t Return to Main Menu" + "\n4: \t Continue Game");
+                switch (Story.ChoiceInt())
+                {
+                    case 1:
+                        
+                        Console.WriteLine("Please Enter Your Desired Save File Name (same name to overwrite old)");
+                        string fileName = Console.ReadLine();
+                        if (fileName != null) player.ToXmlString(fileName);
+                        else player.ToXmlString(player.Name); // Uses defaultfilename if not done properly.
+                        Story.TimedText("Saving....", 200);
+                        Console.WriteLine("Completed!");
+                        System.Threading.Thread.Sleep(1000);
+                        DrawMap(player.CurrentMap, player);
+                        break;
+                    case 2:
+                        Environment.Exit(0);
+                        return;
+                    case 3:
+                        Story.DoIntro(ref player);
+                        DrawMap(player.CurrentMap, player);
+                        return;
+                    case 4:
+
+                    default:
+                        DrawMap(player.CurrentMap, player);
+                        break;
+
+                        
+                        
+                }
             }
         } while (true);
         //Simulating moving with W

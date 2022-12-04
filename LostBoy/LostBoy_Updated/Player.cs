@@ -369,7 +369,6 @@ public class Player
                         if (Int32.TryParse(choice, out x) && Int32.Parse(choice) == piece.InventorySlot)
                         {
                             piece.stats.OutputStats();
-                            Console.WriteLine(this.ToXmlString());
 
                             if (piece.bIsEquippable && !piece.bIsEquipped)
                             {
@@ -405,13 +404,14 @@ public class Player
             }
             else if (Story.GetKey(0x1B)) // Esc out of the inventory.
             {
+                System.Threading.Thread.Sleep(300);
                 Map.DrawMap(this.CurrentMap, this);
                 return;
             }
         }
     }
 
-    public string ToXmlString()
+    public string ToXmlString(string saveFileName = "defaultsavename")
     {
         try
         {
@@ -547,7 +547,7 @@ public class Player
 
             //XmlWriterSettings settings = new XmlWriterSettings();
             //settings.Indent = true;
-            XmlWriter writer = XmlWriter.Create(this.Name + ".xml");
+            XmlWriter writer = XmlWriter.Create(saveFileName + ".xml");
             playerData.Save(writer);
             writer.Close();
             return playerData.InnerXml;

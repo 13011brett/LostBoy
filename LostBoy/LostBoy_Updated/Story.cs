@@ -164,7 +164,11 @@ public class Story // Not sure if making a story object is better than instantia
 
     public static int ChoiceInt()
     {
-        string choice;
+        while (Console.KeyAvailable)
+        {
+            Console.ReadKey(true);
+        }
+        string choice = "";
         int x = 0;
         choice = Console.ReadLine();
         if (int.TryParse(choice, out x)) return int.Parse(choice);
