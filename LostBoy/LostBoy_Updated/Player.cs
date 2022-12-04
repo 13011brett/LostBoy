@@ -7,9 +7,15 @@ using System.Xml;
 using System.Reflection.Emit;
 using System.ComponentModel;
 
+public class TestingGenerics<T>
+{
+    public T Value { get; set; }
+}
+
 public class Player
 {
     public struct Vec3 { public float x; public float y; public float z; }; // Z May be used just to dictate the level we're on? Not quite sure. Going to be a 2d game currently.
+
 
 
     private string name;
@@ -119,7 +125,11 @@ public class Player
             int iArmor = Convert.ToInt32(node.Attributes["IArmor"].Value);
             int iHealth = Convert.ToInt32(node.Attributes["IHealth"].Value);
             Type type = Type.GetType(Convert.ToString(node.Attributes["ItemType"].Value));
+            object v = new object();
+            
             ObtainableItem t = new ObtainableItem(id, ILevelReq, 1, isEquipped, isEquippable, isConsumable, itemSlot, quantity, quantityMax, iHealth, iArmor);
+            //Convert.ChangeType(t, Type.GetType(Convert.ToString(node.Attributes["ItemType"].Value)));
+            //t.ChangeType<Chainmail>(t);
             t.Name = name;
 
             t.InventorySlot = invSlot;

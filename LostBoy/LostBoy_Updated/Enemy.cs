@@ -1,8 +1,8 @@
 ﻿using LostBoy;
 using System.Runtime.InteropServices;
 using System;
-
-
+using System.Collections.Generic;
+using LostBoy.Items;
 
 public enum Monster
 {
@@ -17,8 +17,8 @@ public enum Monster
 public class Enemy : Player
 {
     private Monster monster;
-    
 
+    public List<ObtainableItem> heldItems { get; protected set; } = new List<ObtainableItem>();
     public Monster Monster
     {
         get
@@ -83,6 +83,7 @@ public class Enemy : Player
         this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;
         this.Experience = (((int)this.level * map.MapDifficulty)+RandomNumber(0,map.MapDifficulty));
+        this.heldItems.Add(new Chainmail());
         if (this.monster == Monster.Troll)
         {
             this.icon = 'T';

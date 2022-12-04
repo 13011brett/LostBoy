@@ -33,6 +33,10 @@ namespace LostBoy.Items
             this.bIsEquippable = true;
             this.itemslot = ItemSlot.Chest;
         }
+        public void UseArmor()
+        {
+
+        }
     }
 }
 

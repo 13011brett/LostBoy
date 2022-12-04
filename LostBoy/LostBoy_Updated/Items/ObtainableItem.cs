@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LostBoy.Items
 {
-    public class ObtainableItem
+    public class ObtainableItem : IConvertible
     {
         public  Guid ID { get; set; } = Guid.NewGuid();
         public virtual ItemStats stats { get; set; }
@@ -22,7 +22,8 @@ namespace LostBoy.Items
         public int Quality { get; protected set; }
         public int Quantity { get; set; } = 1;
         public int QuantityMax { get; protected set; } = 1;
-            
+           
+        
         public ObtainableItem()
         {
             //this.stats.Health = 100;
@@ -46,7 +47,12 @@ namespace LostBoy.Items
                 .SetArmor(armor)
                 .Build();
         }
+        
+        public T ChangeType<T>(object a)
+        {
+            return (T)a;
 
+        }
         public void ProperLevel(Player p)
         {
             if (p.level >= this.LevelRequirement)
@@ -85,5 +91,11 @@ namespace LostBoy.Items
             Hands
 
         }
+
     }
+}
+public interface IItem { }
+public interface IConvertible
+{
+
 }

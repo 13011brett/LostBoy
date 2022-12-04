@@ -204,4 +204,5 @@ public class Story // Not sure if making a story object is better than instantia
         return false;
     }
 
+
 }

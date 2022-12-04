@@ -62,9 +62,9 @@ namespace LostBoy
             //player.playerInventory.AddItem(new Chainmail(), 1);
             //player.playerInventory.AddItem(new Chainmail(), 1);
             //player.playerInventory.AddItem(new Chainmail(), 1);
-            //player.playerInventory.AddItem(new Chainmail(), 1);
-            //player.playerInventory.AddItem(new Chainmail(), 1);
-            //player.playerInventory.AddItem(new Potion(), 2);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Chainmail(), 1);
+            player.playerInventory.AddItem(new Potion(), 2);
             Story.DoIntro(ref player);
             //Story.TimedText(Story.introduction, 1, true);
             Console.ForegroundColor = ConsoleColor.Green;
