@@ -45,9 +45,13 @@ public class Story // Not sure if making a story object is better than instantia
     public static void DoIntro(ref Player p)
     {
         bool FirstTime = true;
+        ConsoleColor currentColor = Console.ForegroundColor;
+        ConsoleColor HighlightColor = ConsoleColor.White;
+
         while (true)
         {
             Console.Clear();
+            Console.CursorVisible = false;
             if (FirstTime)
             {
                 Story.TimedText(introduction + introduction2 + "\n");
@@ -58,15 +62,18 @@ public class Story // Not sure if making a story object is better than instantia
             switch (ChoiceInt())
             {
 
+
                 case 1: // Create new save file, save is based off of the name currently. 
                     Story.TimedText(introduction3, 10, true);
                     p.GetName();
                     Story.afterIntro(p.Name);
+                    Map Dungeon = new Map(100, 100, 20);
+                    Map.DrawMap(Dungeon, p);
                     return;
                 case 2: // Load a saved game.
                     Console.Clear();
                     
-                    Console.WriteLine("Please select your save file.\n\n");
+                    Console.WriteLine("Please select your save file.\nArrow Keys to navigate (up/down)\n");
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml", SearchOption.AllDirectories);
                     List<FileHolder> filesList = new List<FileHolder>();
                     int i = 0;
@@ -86,6 +93,7 @@ public class Story // Not sure if making a story object is better than instantia
                     System.Threading.Thread.Sleep(300);
                     while (true)
                     {
+                        
                         if(GetKey(0x26, 100) && topMaxSelection < currentSelection && bottomMaxSelection >= currentSelection)
                         {
                             Console.SetCursorPosition(left, currentSelection);
@@ -93,7 +101,9 @@ public class Story // Not sure if making a story object is better than instantia
                             i--;
                             Console.Write("o");
                             Console.SetCursorPosition(left, currentSelection);
+                            Console.ForegroundColor = HighlightColor;
                             Console.Write("x");
+                            Console.ForegroundColor = currentColor;
                         }
                         if (GetKey(0x28, 100) && topMaxSelection <= currentSelection && bottomMaxSelection > currentSelection)
                         {
@@ -102,7 +112,9 @@ public class Story // Not sure if making a story object is better than instantia
                             i++; 
                             Console.Write("o");
                             Console.SetCursorPosition(left, currentSelection);
+                            Console.ForegroundColor = HighlightColor;
                             Console.Write("x");
+                            Console.ForegroundColor = currentColor;
                         }
                         if (GetKey(0x0D))
                         {
@@ -115,6 +127,7 @@ public class Story // Not sure if making a story object is better than instantia
                                     { 
 
                                         p = Player.CreatePlayerFromXmlString(File.ReadAllText(file.fileName));
+                                        Map.DrawMap(p.CurrentMap, p);
                                         return;
                                     }
                                     catch(Exception e)

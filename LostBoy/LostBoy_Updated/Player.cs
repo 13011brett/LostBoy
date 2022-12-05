@@ -225,6 +225,8 @@ public class Player
         this.location.y = (int)(map.MapSize.y-1);
         this.location.z = map.MapSize.z;
         Console.CursorVisible = false;
+        Console.SetWindowSize(((int)map.MapSize.x), ((int)map.MapSize.y));
+        Console.SetBufferSize((int)map.MapSize.x, (int)map.MapSize.y);
         Console.SetCursorPosition(((int)this.location.x / 2), ((int)this.location.y));
     }
 

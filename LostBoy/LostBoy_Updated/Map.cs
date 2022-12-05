@@ -145,6 +145,7 @@ public class Map : Player
         Console.SetBufferSize((int)map.mapSize.x, (int)map.mapSize.y);
         Map.FillBorder();
         Map.EnemiesToScreen(map);
+        Console.ForegroundColor = ConsoleColor.Green;
         Map.ScreenMovement(player, map);
         
 
@@ -270,8 +271,8 @@ public class Map : Player
                         Environment.Exit(0);
                         return;
                     case 3:
+                        //player = new Player();
                         Story.DoIntro(ref player);
-                        DrawMap(player.CurrentMap, player);
                         return;
                     case 4:
 
