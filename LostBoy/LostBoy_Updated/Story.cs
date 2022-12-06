@@ -47,6 +47,8 @@ public class Story // Not sure if making a story object is better than instantia
         bool FirstTime = true;
         ConsoleColor currentColor = Console.ForegroundColor;
         ConsoleColor HighlightColor = ConsoleColor.White;
+        Console.SetWindowSize((Console.LargestWindowWidth/2), (Console.LargestWindowHeight/2));
+        Console.SetBufferSize((Console.LargestWindowWidth/2), (Console.LargestWindowHeight/2));
 
         while (true)
         {
@@ -72,6 +74,7 @@ public class Story // Not sure if making a story object is better than instantia
                     return;
                 case 2: // Load a saved game.
                     Console.Clear();
+
                     
                     Console.WriteLine("Please select your save file.\nArrow Keys to navigate (up/down)\n");
                     var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml", SearchOption.AllDirectories);

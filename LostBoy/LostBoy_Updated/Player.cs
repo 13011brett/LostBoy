@@ -324,6 +324,8 @@ public class Player
             InventoryStart:
             int i = 1;
             Console.Clear();
+            Console.SetWindowSize((Console.LargestWindowWidth/4), (Console.LargestWindowHeight-10));
+            Console.SetBufferSize((Console.LargestWindowWidth/4), (Console.LargestWindowHeight-10));
             string equipItems = "Equip / View items = E Key.";
             string quitInv = "Leave Inventory = ESC key.";
             Console.SetCursorPosition((Console.WindowWidth - equipItems.Length), 0);

@@ -252,6 +252,8 @@ public class Map : Player
             if((Story.GetAsyncKeyState(0x1B) & 0x8000) == 0x8000) // Break out with esc
             {
                 Console.Clear();
+                Console.SetWindowSize((Console.LargestWindowWidth/5), (Console.LargestWindowHeight/4));
+                Console.SetBufferSize((Console.LargestWindowWidth / 5), (Console.LargestWindowHeight / 4));
                 int x = 0;
                 Console.WriteLine("1: \t Save Game" + "\n2: \t Quit Game" + "\n3: \t Return to Main Menu" + "\n4: \t Continue Game");
                 switch (Story.ChoiceInt())
