@@ -90,6 +90,8 @@ public class Map : Player
 
     public static void FillBorder(char c = '-')
     {
+        ConsoleColor currentColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.White;
         Map.Border = c;
         for(int i = 0; i < Console.WindowHeight; i++)
         {
@@ -106,6 +108,7 @@ public class Map : Player
             Console.SetCursorPosition(Console.WindowWidth - 1, i);
             Console.Write('|');
         }
+        Console.ForegroundColor = currentColor;
     }
 
     public static void EnemiesToScreen(Map map) // Currently not working as expected; need to find a way to map it not go out of window bounds.

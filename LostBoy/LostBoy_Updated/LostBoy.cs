@@ -53,7 +53,7 @@ namespace LostBoy
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);    // Disable maximizing
             
             Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Clear();
             Console.SetWindowSize((Console.LargestWindowWidth / 2), (Console.LargestWindowHeight - 10));
 
@@ -67,7 +67,7 @@ namespace LostBoy
             player.playerInventory.AddItem(new Potion(), 2);
             Story.DoIntro(ref player);
             //Story.TimedText(Story.introduction, 1, true);
-            Console.ForegroundColor = ConsoleColor.Green;
+            
 
             
             Map Dungeon = new Map(200, 20, 10); // Testing Map One
