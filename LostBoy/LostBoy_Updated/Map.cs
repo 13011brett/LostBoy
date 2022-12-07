@@ -5,11 +5,12 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 public class Map : Player
 {
     private Player.Vec3 mapSize;
-    private int mapDifficulty;
+    private int EnemyAmount;
     public List<Enemy> enemies = new List<Enemy>();
     public static char Border { get; protected set; }
     
@@ -23,20 +24,22 @@ public class Map : Player
     {
         get
         {
-            return mapDifficulty;
+            return EnemyAmount;
         }
         set
         {
-            mapDifficulty = value;
+            EnemyAmount = value;
         }
     }
+    public int MapLevel { get; set; }
     public bool ResetLoc { get; protected set; } = true;
 
-    public Map(float map_x, float map_y, int difficulty)
+    public Map(float map_x, float map_y, int enemyAmount)
     {
         this.mapSize.x = map_x;
         this.mapSize.y = map_y;
-        this.mapDifficulty = difficulty;
+        this.EnemyAmount = enemyAmount;
+        this.MapLevel = enemyAmount / 5;
         if(this.mapSize.x > (Console.LargestWindowWidth-20)) this.mapSize.x = (Console.LargestWindowWidth-20);
         if (this.mapSize.y > (Console.LargestWindowHeight-10)) this.mapSize.y = (Console.LargestWindowHeight-10);
         EnemyCreation(this);
@@ -46,7 +49,7 @@ public class Map : Player
     {
 
 //        Enemy[] enemy = new Enemy[map.mapDifficulty];
-        for (int i = 0; i < map.mapDifficulty; i++)
+        for (int i = 0; i < map.EnemyAmount; i++)
         {
             Player.Vec3 loc;
             loc.x = Player.RandomNumber(1, (int)map.MapSize.x);  // rand x for monster

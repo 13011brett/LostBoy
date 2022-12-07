@@ -66,7 +66,7 @@ public class Enemy : Player
     {
 
         this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
-        this.stats.Health = ((this.level * RandomFloatNumber(1, map.MapDifficulty)) + 100);
+        this.stats.Health = ((this.level * RandomFloatNumber(1, map.MapDifficulty)) + 70);
         this.damage = 100;
         this.Armor = (.05f * map.MapDifficulty);
         this.monster = (Monster)RandomNumber(0, 2);
@@ -78,8 +78,8 @@ public class Enemy : Player
     public Enemy(Map map, Vec3 loc)
     {
 
-        this.level = (map.MapDifficulty); // Difficulty of map = monster level (? might not be best.).
-        this.stats.Health = ((this.level * RandomFloatNumber(1, 10)) + 100);
+        this.level = (map.MapLevel); // Difficulty of map = monster level (? might not be best.).
+        this.stats.Health = ((this.level * RandomFloatNumber(1, 10)) + 70);
         this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;
         this.Experience = (((int)this.level * map.MapDifficulty)+RandomNumber(0,map.MapDifficulty));

@@ -60,7 +60,7 @@ public class Player
     public Player()
     {
         
-        this.damage = level * (RandomNumber(level, level + 50));
+        this.damage = 30;
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
         this.color = ConsoleColor.Blue;
@@ -68,13 +68,13 @@ public class Player
         this.stats = new StatsBuilder()
             .SetAPBase(100)
             .SetHealth(100)
-            .SetArmor(9123)
+            .SetArmor(0)
             .Build();
 
 
     }
 
-    private Player(float hp, float maxHP, int myArmor, string myName)
+    private Player(float hp, float maxHP, int myArmor, string myName) // Creation from XML.
     {
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = myName;
@@ -253,6 +253,9 @@ public class Player
 
         while(player.Experience >= player.ExperienceRequired)
         {
+            player.stats.MaxHealth += 30;
+            player.stats.Health = player.stats.MaxHealth;
+            player.damage += 5;
             player.Experience -= player.ExperienceRequired;
             player.level++;
             player.ExperienceRequired = ((player.level * player.level) * 100);
