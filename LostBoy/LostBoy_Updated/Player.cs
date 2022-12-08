@@ -19,6 +19,7 @@ public class Player
 
 
     private string name;
+    public float ArmorFactor { get; set; } = 75f;
     public Stats stats { get; set; }
     public Inventory playerInventory = new Inventory();
     public float Armor { get; protected set; }
@@ -68,7 +69,7 @@ public class Player
         this.stats = new StatsBuilder()
             .SetAPBase(100)
             .SetHealth(100)
-            .SetArmor(0)
+            .SetArmor(1000)
             .Build();
 
 
@@ -232,8 +233,9 @@ public class Player
 
     public static void Damage(ref Player attacker, Player attackee)
     {
-        attacker.stats.Health -= attackee.damage;
-        attackee.stats.Health -= attacker.damage;
+        if(attackee.damage - (attacker.stats.Armor / attacker.ArmorFactor) > 0)attacker.stats.Health -= (attackee.damage - (attacker.stats.Armor/attacker.ArmorFactor));
+        //else no damage is taken
+        if(attacker.damage - (attackee.stats.Armor / attacker.ArmorFactor) > 0)attackee.stats.Health -= (attacker.damage - (attackee.stats.Armor/attacker.ArmorFactor));
         if (attacker.stats.Health < 0) attacker.stats.Health = 0; 
     }
 
