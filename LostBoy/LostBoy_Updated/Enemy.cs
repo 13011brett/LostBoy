@@ -77,8 +77,14 @@ public class Enemy : Player
     }
     public Enemy(Map map, Vec3 loc)
     {
-
         this.level = (map.MapLevel); // Difficulty of map = monster level (? might not be best.).
+        this.stats = new StatsBuilder()
+        .SetAPBase(50 * this.level)
+        .Build();
+            
+        
+        this.damage = (this.stats.AttackPower/15)+5;
+        
         this.stats.Health = ((this.level * RandomFloatNumber(1, 10)) + 70);
         this.monster = (Monster)RandomNumber(0, 3);
         this.location = loc;

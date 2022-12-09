@@ -61,7 +61,7 @@ public class Player
     public Player()
     {
         
-        this.damage = 30;
+        
         this.location = new Vec3() { x = 0, y = 0, z = 0 };
         this.name = "Name Not Set. Now, how did that happen?\n";
         this.color = ConsoleColor.Blue;
@@ -71,6 +71,7 @@ public class Player
             .SetHealth(100)
             .SetArmor(1000)
             .Build();
+        this.damage = (this.stats.AttackPower / 15) + (10*this.level);
 
 
     }
