@@ -68,6 +68,7 @@ public class Story // Not sure if making a story object is better than instantia
 
                 case 1: // Create new save file, save is based off of the name currently.
                     Console.ForegroundColor = ConsoleColor.Blue;
+                    p = new Player();
                     Story.TimedText(introduction3, 10, true);
                     p.GetName();
                     Story.afterIntro(p.Name);
