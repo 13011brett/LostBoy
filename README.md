@@ -1,6 +1,6 @@
 # Lost Boy
 
-A retro console RPG built in C# / .NET 8. Explore dungeon maps, fight monsters, loot gear, and level up — all from your terminal.
+A retro console RPG built in C# / .NET 8. Explore dungeon maps, fight monsters, loot gear, and level up.
 
 ![gameplay](gameplay.png) 
 
