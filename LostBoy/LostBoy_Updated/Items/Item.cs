@@ -18,8 +18,7 @@ public enum ItemSlot
 }
 
 /// <summary>
-/// Base class for all items that can be picked up, equipped, or consumed.
-/// Replaces ObtainableItem (which implemented a fake IConvertible that shadowed System.IConvertible).
+/// Base class for all obtainable items.
 /// </summary>
 public class Item
 {
@@ -34,15 +33,10 @@ public class Item
     public int MaxQuantity { get; set; } = 1;
     public int InventorySlot { get; set; }
 
-    /// <summary>
-    /// Apply this consumable's effects to a Stats block.
-    /// Takes Stats directly instead of Player to avoid circular dependency.
-    /// </summary>
     public bool Consume(Stats targetStats)
     {
         if (!IsConsumable || Quantity <= 0) return false;
 
-        // Heal
         if (BonusStats.Health > 0)
         {
             targetStats.Health = Math.Min(
@@ -50,7 +44,6 @@ public class Item
                 targetStats.MaxHealth);
         }
 
-        // Restore mana
         if (BonusStats.Mana > 0)
         {
             targetStats.Mana = Math.Min(
@@ -63,14 +56,14 @@ public class Item
     }
 }
 
-// ── Concrete Items ──────────────────────────────────────────
+// ── Armor Items ─────────────────────────────────────────────
 
 public class Chainmail : Item
 {
     public Chainmail()
     {
-        int armor = Rng.Next(50, 256);
-        int health = Rng.Next(50, 256);
+        int armor = Rng.Next(30, 150);
+        int health = Rng.Next(20, 100);
 
         BonusStats = new StatsBuilder()
             .SetArmor(armor)
@@ -84,17 +77,210 @@ public class Chainmail : Item
     }
 }
 
+public class IronHelm : Item
+{
+    public IronHelm()
+    {
+        int armor = Rng.Next(15, 80);
+        int health = Rng.Next(10, 60);
+
+        BonusStats = new StatsBuilder()
+            .SetArmor(armor)
+            .SetHealth(health)
+            .SetRequiredLevel(1)
+            .Build();
+
+        Name = "Iron Helm" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Head;
+    }
+}
+
+public class LeatherBoots : Item
+{
+    public LeatherBoots()
+    {
+        int armor = Rng.Next(10, 50);
+        int dex = Rng.Next(5, 20);
+
+        BonusStats = new StatsBuilder()
+            .SetArmor(armor)
+            .SetDexterity(dex)
+            .SetRequiredLevel(1)
+            .Build();
+
+        Name = "Leather Boots" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Feet;
+    }
+}
+
+public class SteelGauntlets : Item
+{
+    public SteelGauntlets()
+    {
+        int armor = Rng.Next(10, 60);
+        int str = Rng.Next(5, 25);
+
+        BonusStats = new StatsBuilder()
+            .SetArmor(armor)
+            .SetStrength(str)
+            .SetRequiredLevel(3)
+            .Build();
+
+        Name = "Steel Gauntlets" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Gloves;
+    }
+}
+
+// ── Weapon Items ────────────────────────────────────────────
+
+public class RustySword : Item
+{
+    public RustySword()
+    {
+        int ap = Rng.Next(20, 80);
+
+        BonusStats = new StatsBuilder()
+            .SetAttackPower(ap)
+            .SetRequiredLevel(1)
+            .Build();
+
+        Name = "Rusty Sword" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Hands;
+    }
+}
+
+public class BattleAxe : Item
+{
+    public BattleAxe()
+    {
+        int ap = Rng.Next(40, 120);
+        int str = Rng.Next(5, 15);
+
+        BonusStats = new StatsBuilder()
+            .SetAttackPower(ap)
+            .SetStrength(str)
+            .SetRequiredLevel(3)
+            .Build();
+
+        Name = "Battle Axe" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Hands;
+    }
+}
+
+// ── Accessory Items ─────────────────────────────────────────
+
+public class AmuletOfVitality : Item
+{
+    public AmuletOfVitality()
+    {
+        int health = Rng.Next(50, 200);
+        int vit = Rng.Next(5, 20);
+
+        BonusStats = new StatsBuilder()
+            .SetHealth(health)
+            .SetVitality(vit)
+            .SetRequiredLevel(2)
+            .Build();
+
+        Name = "Amulet" + BonusStats.GetAffix();
+        IsEquippable = true;
+        Slot = ItemSlot.Necklace;
+    }
+}
+
+// ── Consumables ─────────────────────────────────────────────
+
 public class Potion : Item
 {
     public Potion()
     {
         BonusStats = new StatsBuilder()
-            .SetHealth(1000)
+            .SetHealth(100)
             .Build();
 
         Name = "Health Potion";
         IsConsumable = true;
         IsEquippable = false;
         MaxQuantity = 10;
+    }
+}
+
+public class GreaterPotion : Item
+{
+    public GreaterPotion()
+    {
+        BonusStats = new StatsBuilder()
+            .SetHealth(300)
+            .Build();
+
+        Name = "Greater Health Potion";
+        IsConsumable = true;
+        IsEquippable = false;
+        MaxQuantity = 5;
+    }
+}
+
+// ── Loot Table Generator ────────────────────────────────────
+
+public static class LootTable
+{
+    /// <summary>
+    /// Generate a random item appropriate for the given difficulty level.
+    /// Returns null if the enemy drops nothing (chance-based).
+    /// </summary>
+    public static Item? GenerateLoot(int mapDifficulty)
+    {
+        // 40% chance of no drop
+        if (Rng.Next(100) < 40) return null;
+
+        // Weight table based on difficulty
+        int roll = Rng.Next(100);
+
+        if (mapDifficulty <= 5)
+        {
+            // Easy maps: basic gear + potions
+            return roll switch
+            {
+                < 20 => new Potion(),
+                < 40 => new IronHelm(),
+                < 55 => new LeatherBoots(),
+                < 70 => new RustySword(),
+                < 85 => new Chainmail(),
+                _ => new AmuletOfVitality(),
+            };
+        }
+        else if (mapDifficulty <= 25)
+        {
+            // Medium maps: better gear
+            return roll switch
+            {
+                < 15 => new Potion(),
+                < 25 => new GreaterPotion(),
+                < 40 => new Chainmail(),
+                < 55 => new SteelGauntlets(),
+                < 70 => new BattleAxe(),
+                < 85 => new AmuletOfVitality(),
+                _ => new IronHelm(),
+            };
+        }
+        else
+        {
+            // Hard maps: mostly good stuff
+            return roll switch
+            {
+                < 15 => new GreaterPotion(),
+                < 30 => new BattleAxe(),
+                < 45 => new SteelGauntlets(),
+                < 60 => new Chainmail(),
+                < 75 => new AmuletOfVitality(),
+                < 90 => new LeatherBoots(),
+                _ => new RustySword(),
+            };
+        }
     }
 }

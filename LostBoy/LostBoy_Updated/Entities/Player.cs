@@ -21,12 +21,12 @@ public class Player : Entity
         ExperienceRequired = 100;
 
         Stats = new StatsBuilder()
-            .SetHealth(100)
-            .SetAttackPower(100)
-            .SetArmor(1000)
+            .SetHealth(120)
+            .SetAttackPower(50)
+            .SetArmor(20)
             .Build();
 
-        Damage = (Stats.AttackPower / 15f) + (10 * Level);
+        Damage = (Stats.AttackPower / 10f) + (5 * Level);
     }
 
     /// <summary>

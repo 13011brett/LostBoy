@@ -23,18 +23,24 @@ public class Enemy : Entity
     public Enemy(int mapLevel, int mapDifficulty, Vec2 position)
     {
         MonsterType = (MonsterType)Rng.Next(0, 3);
-        Level = mapLevel;
+        Level = Math.Max(1, mapLevel); // Never level 0
         Position = position;
 
+        // Scale stats with level — monsters should always be a threat
+        int baseAP = 30 + (20 * Level);
+        float baseHP = 50 + (Level * Rng.NextFloat(8, 20));
+
         Stats = new StatsBuilder()
-            .SetAttackPower(50 * Level)
-            .SetHealth(Level * Rng.NextFloat(1, 10) + 70)
+            .SetAttackPower(baseAP)
+            .SetHealth(baseHP)
+            .SetArmor(5 * Level)
             .Build();
 
-        Damage = (Stats.AttackPower / 15f) + 5;
-        Experience = (Level * mapDifficulty) + Rng.Next(0, mapDifficulty);
+        // Damage formula ensures enemies always deal meaningful damage
+        Damage = Math.Max(8, (Stats.AttackPower / 10f) + (3 * Level));
+        Experience = (Level * mapDifficulty) + Rng.Next(5, mapDifficulty + 10);
 
-        // Set appearance based on monster type
+        // Monster type affects stats slightly
         (Icon, Color, Name) = MonsterType switch
         {
             MonsterType.Troll => ('T', ConsoleColor.Yellow, "Troll"),
@@ -43,8 +49,21 @@ public class Enemy : Entity
             _ => ('?', ConsoleColor.Gray, "Unknown Beast"),
         };
 
-        // Generate loot
-        LootTable.Add(new Chainmail());
+        // Ogres are tankier, Demons hit harder
+        if (MonsterType == MonsterType.Ogre)
+        {
+            Stats.Health *= 1.3f;
+            Stats.MaxHealth *= 1.3f;
+            Stats.Armor += 10;
+        }
+        else if (MonsterType == MonsterType.Demon)
+        {
+            Damage *= 1.4f;
+        }
+
+        // Generate loot from the loot table instead of always Chainmail
+        var loot = Items.LootTable.GenerateLoot(mapDifficulty);
+        if (loot != null) LootTable.Add(loot);
     }
 
     /// <summary>

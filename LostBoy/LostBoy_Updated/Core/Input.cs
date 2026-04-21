@@ -4,13 +4,21 @@ namespace LostBoy.Core;
 
 /// <summary>
 /// Centralized input handling.
-/// On Windows, uses GetAsyncKeyState for real-time polling (needed for the game loop).
-/// Falls back to Console.KeyAvailable on other platforms.
+/// Fixes:
+/// - Only reads keys when the console window is focused (prevents ghost inputs)
+/// - Provides ConsumeKey to eat a held key so it doesn't re-trigger
+/// - Debounce helpers
 /// </summary>
 public static class Input
 {
     [DllImport("user32.dll")]
     private static extern ushort GetAsyncKeyState(int vKey);
+
+    [DllImport("kernel32.dll", ExactSpelling = true)]
+    private static extern IntPtr GetConsoleWindow();
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
 
     private static readonly bool _isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
@@ -29,12 +37,27 @@ public static class Input
     public const int VK_DOWN = 0x28;
 
     /// <summary>
+    /// Returns true only if our console window is the active foreground window.
+    /// </summary>
+    public static bool IsConsoleFocused()
+    {
+        if (!_isWindows) return true; // Assume focused on non-Windows
+        try
+        {
+            return GetConsoleWindow() == GetForegroundWindow();
+        }
+        catch { return true; }
+    }
+
+    /// <summary>
     /// Check if a key is currently pressed (non-blocking).
+    /// Only returns true when the console window is focused.
     /// </summary>
     public static bool IsKeyDown(int vKey)
     {
         if (_isWindows)
         {
+            if (!IsConsoleFocused()) return false;
             return (GetAsyncKeyState(vKey) & 0x8000) == 0x8000;
         }
 
@@ -61,13 +84,37 @@ public static class Input
     }
 
     /// <summary>
+    /// Wait until a specific key is released, preventing it from
+    /// being read again immediately by the next check.
+    /// Call this after processing a key you don't want to re-trigger.
+    /// </summary>
+    public static void ConsumeKey(int vKey, int timeoutMs = 500)
+    {
+        int waited = 0;
+        while (IsKeyDown(vKey) && waited < timeoutMs)
+        {
+            Thread.Sleep(10);
+            waited += 10;
+        }
+        // Small extra delay to prevent bounce
+        Thread.Sleep(50);
+    }
+
+    /// <summary>
+    /// Flush any buffered console keys.
+    /// </summary>
+    public static void FlushKeys()
+    {
+        while (Console.KeyAvailable)
+            Console.ReadKey(true);
+    }
+
+    /// <summary>
     /// Read a line from console, clearing any buffered keys first.
     /// </summary>
     public static string ReadLineClean()
     {
-        while (Console.KeyAvailable)
-            Console.ReadKey(true);
-
+        FlushKeys();
         return Console.ReadLine() ?? "";
     }
 

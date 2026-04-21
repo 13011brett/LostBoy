@@ -64,13 +64,60 @@ public class Map
                     Terrain[x, y] = Tile.Floor;
             }
 
-        // Pillars (non-walkable obstacles)
-        int pillarCount = (Width * Height) / 300;
+        // Pillars — more of them, placed in small clusters
+        int pillarCount = (Width * Height) / 150;
         for (int i = 0; i < pillarCount; i++)
         {
             int px = Rng.Next(4, Width - 4);
             int py = Rng.Next(3, Height - 3);
             Terrain[px, py] = Tile.Pillar;
+
+            // 30% chance to make a small cluster (2-3 pillars in a row)
+            if (Rng.Next(100) < 30)
+            {
+                if (px + 2 < Width - 3) Terrain[px + 2, py] = Tile.Pillar;
+                if (Rng.Next(100) < 50 && px + 4 < Width - 3)
+                    Terrain[px + 4, py] = Tile.Pillar;
+            }
+        }
+
+        // Water pools (blocking)
+        int waterPools = Rng.Next(1, 3);
+        for (int p = 0; p < waterPools; p++)
+        {
+            int cx = Rng.Next(8, Width - 8);
+            int cy = Rng.Next(4, Height - 4);
+            int sizeX = Rng.Next(2, 5);
+            int sizeY = Rng.Next(1, 3);
+            for (int dx = -sizeX; dx <= sizeX; dx++)
+                for (int dy = -sizeY; dy <= sizeY; dy++)
+                {
+                    int nx = cx + dx, ny = cy + dy;
+                    if (nx > 2 && nx < Width - 3 && ny > 2 && ny < Height - 3)
+                    {
+                        // Oval shape — skip corners
+                        if (Math.Abs(dx) == sizeX && Math.Abs(dy) == sizeY) continue;
+                        Terrain[nx, ny] = Tile.Water;
+                    }
+                }
+        }
+
+        // Interior wall segments (blocking horizontal lines)
+        int wallSegments = Rng.Next(1, 3);
+        for (int w = 0; w < wallSegments; w++)
+        {
+            int wx = Rng.Next(6, Width / 2);
+            int wy = Rng.Next(3, Height - 3);
+            int wLen = Rng.Next(4, 12);
+            // Leave a gap for passage
+            int gapPos = Rng.Next(1, wLen - 1);
+            for (int i = 0; i < wLen; i++)
+            {
+                if (i == gapPos || i == gapPos + 1) continue; // Gap
+                int nx = wx + i;
+                if (nx > 1 && nx < Width - 2)
+                    Terrain[nx, wy] = Tile.Pillar;
+            }
         }
 
         // Torches along walls

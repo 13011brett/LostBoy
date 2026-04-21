@@ -90,9 +90,8 @@ public class GameLoop
     private void NewGame()
     {
         _player = new Player();
-        _player.Bag.AddItem(new Chainmail(), 1);
-        _player.Bag.AddItem(new Chainmail(), 1);
-        _player.Bag.AddItem(new Potion(), 2);
+        _player.Bag.AddItem(new RustySword(), 1);
+        _player.Bag.AddItem(new Potion(), 3);
 
         Console.Clear();
         Console.ForegroundColor = ConsoleColor.Blue;
@@ -232,6 +231,7 @@ public class GameLoop
             // Inventory
             if (Input.IsKeyDown(Input.VK_I))
             {
+                Input.ConsumeKey(Input.VK_I);
                 HandleInventory();
                 Renderer.DrawFullMap(map, _player);
             }
@@ -239,6 +239,7 @@ public class GameLoop
             // Pause menu
             if (Input.IsKeyDown(Input.VK_ESCAPE))
             {
+                Input.ConsumeKey(Input.VK_ESCAPE);
                 if (HandlePauseMenu(map)) return;
                 Renderer.DrawFullMap(map, _player);
             }

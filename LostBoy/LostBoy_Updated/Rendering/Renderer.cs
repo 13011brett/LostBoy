@@ -492,6 +492,7 @@ public static class Renderer
             if (Input.IsKeyDown(Input.VK_ESCAPE))
             {
                 Console.Write(text[(i + 1)..]);
+                Input.ConsumeKey(Input.VK_ESCAPE); // Prevent ESC from triggering pause menu
                 break;
             }
         }
