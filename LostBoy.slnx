@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="LostBoy.Console/LostBoy.Console.csproj" />
+  <Project Path="LostBoy.Core/LostBoy.Core.csproj" />
+  <Project Path="LostBoy.Web/LostBoy.Web.csproj" />
+</Solution>

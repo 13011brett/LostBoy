@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Cinzel:wght@400;700&display=swap');
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #08080c;
+    color: #c8c8d0;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background: radial-gradient(ellipse at center, #12121a 0%, #08080c 70%);
+}
+
+.game-canvas {
+    border: 1px solid #2a2a3a;
+    box-shadow: 0 0 40px rgba(100, 60, 180, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.5);
+    image-rendering: pixelated;
+}
+
+/* ── Main Menu ── */
+
+.menu-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: radial-gradient(ellipse at 30% 40%, #1a1028 0%, #08080c 70%);
+    gap: 2rem;
+}
+
+.menu-title {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #c084fc, #818cf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 40px rgba(168, 139, 250, 0.3);
+    text-transform: uppercase;
+}
+
+.menu-subtitle {
+    font-size: 0.9rem;
+    color: #6b6b80;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: -1rem;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.menu-btn {
+    background: transparent;
+    border: 1px solid #3a3a50;
+    color: #a0a0b8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.8rem 3rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.1em;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-btn:hover {
+    border-color: #a78bfa;
+    color: #e0e0f0;
+    background: rgba(167, 139, 250, 0.08);
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+}
+
+.menu-btn:active {
+    transform: scale(0.98);
+}
+
+/* ── Story / Intro ── */
+
+.story-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 30%, #151520 0%, #08080c 70%);
+}
+
+.story-box {
+    max-width: 700px;
+    padding: 2.5rem;
+    border: 1px solid #2a2a3a;
+    background: rgba(15, 15, 25, 0.9);
+    line-height: 1.8;
+    font-size: 0.9rem;
+    color: #9898b0;
+    white-space: pre-wrap;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.story-box::-webkit-scrollbar {
+    width: 4px;
+}
+
+.story-box::-webkit-scrollbar-thumb {
+    background: #3a3a50;
+}
+
+.story-input {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.story-input label {
+    color: #a78bfa;
+    font-size: 0.9rem;
+}
+
+.story-input input {
+    background: transparent;
+    border: 1px solid #3a3a50;
+    color: #e0e0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.story-input input:focus {
+    border-color: #a78bfa;
+}
+
+.continue-btn {
+    margin-top: 1.5rem;
+    background: transparent;
+    border: 1px solid #3a3a50;
+    color: #808098;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.6rem 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+}
+
+.continue-btn:hover {
+    border-color: #a78bfa;
+    color: #c8c8e0;
+}
+
+/* ── Combat Overlay ── */
+
+.combat-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    gap: 1.5rem;
+}
+
+.combat-panels {
+    display: flex;
+    gap: 2rem;
+}
+
+.combat-panel {
+    border: 1px solid #2a2a3a;
+    padding: 1.5rem 2rem;
+    min-width: 280px;
+    background: rgba(15, 15, 25, 0.95);
+}
+
+.combat-panel h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.combat-panel .player-name { color: #22c55e; }
+.combat-panel .enemy-name { color: #ef4444; }
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.2rem 0;
+    font-size: 0.85rem;
+    color: #8888a0;
+}
+
+.stat-row .value { color: #c8c8d8; }
+
+.health-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #1a1a28;
+    border: 1px solid #2a2a3a;
+    margin: 0.5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.health-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.health-bar-fill.player { background: linear-gradient(90deg, #166534, #22c55e); }
+.health-bar-fill.enemy { background: linear-gradient(90deg, #7f1d1d, #ef4444); }
+
+.combat-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.combat-btn {
+    background: transparent;
+    border: 1px solid #3a3a50;
+    color: #a0a0b8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    padding: 0.7rem 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.combat-btn.attack:hover {
+    border-color: #ef4444;
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.combat-btn.run:hover {
+    border-color: #eab308;
+    color: #fde047;
+    background: rgba(234, 179, 8, 0.08);
+}
+
+.combat-log {
+    font-size: 0.8rem;
+    color: #6b6b80;
+    min-height: 1.5rem;
+    text-align: center;
+}
+
+.combat-log.loot { color: #eab308; }
+.combat-log.victory { color: #22c55e; }
+.combat-log.defeat { color: #ef4444; }
+
+/* ── Inventory Overlay ── */
+
+.inventory-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.inventory-panel {
+    border: 1px solid #2a2a3a;
+    padding: 2rem;
+    background: rgba(15, 15, 25, 0.98);
+    min-width: 500px;
+    max-width: 650px;
+}
+
+.inventory-panel h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    color: #a78bfa;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+}
+
+.inv-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 2rem;
+    padding: 1rem;
+    border: 1px solid #1a1a2a;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+.inv-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid #1a1a2a;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.inv-item:hover {
+    background: rgba(167, 139, 250, 0.06);
+}
+
+.inv-item.equipped {
+    color: #67e8f9;
+}
+
+.inv-item .qty {
+    color: #6b6b80;
+    margin-left: 0.5rem;
+}
+
+.inv-item .tag {
+    font-size: 0.75rem;
+    color: #22d3ee;
+    margin-left: 0.5rem;
+}
+
+.inv-close {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #6b6b80;
+    text-align: center;
+}
+
+/* ── Pause Overlay ── */
+
+.pause-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.pause-panel {
+    border: 1px solid #2a2a3a;
+    padding: 2rem 3rem;
+    background: rgba(15, 15, 25, 0.98);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pause-panel h2 {
+    font-family: 'Cinzel', serif;
+    color: #a78bfa;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+/* ── HUD bar ── */
+
+.hud-bar {
+    display: flex;
+    gap: 2rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    color: #6b6b80;
+    background: rgba(10, 10, 18, 0.9);
+    border-top: 1px solid #2a2a3a;
+    width: fit-content;
+    margin-top: -1px;
+}
+
+.hud-bar .hp { color: #ef4444; }
+.hud-bar .lv { color: #67e8f9; }
+.hud-bar .xp { color: #eab308; }
+.hud-bar .hint { color: #4a4a60; }

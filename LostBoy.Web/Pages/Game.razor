@@ -1,0 +1,449 @@
+@page "/"
+@using LostBoy.Web.Services
+@using LostBoy.Entities
+@using LostBoy.Items
+@using LostBoy.Systems
+@inject GameEngine Engine
+@implements IDisposable
+
+<div class="game-container" @ref="_container" tabindex="0">
+
+    @switch (Engine.Screen)
+    {
+        case GameScreen.MainMenu:
+            <div class="menu-screen">
+                <div class="menu-title">Lost Boy</div>
+                <div class="menu-subtitle">a dungeon crawler</div>
+                <div class="menu-buttons">
+                    <button class="menu-btn" @onclick="OnNewGame">New Game</button>
+                    <button class="menu-btn" @onclick="OnControls">Controls</button>
+                </div>
+                @if (_showControls)
+                {
+                    <div class="story-box" style="margin-top: 1rem; max-width: 400px; font-size: 0.8rem;">
+                        <div><strong style="color:#a78bfa;">Movement:</strong> W A S D or Arrow Keys</div>
+                        <div style="margin-top:0.4rem;"><strong style="color:#a78bfa;">Combat:</strong> Click Attack or press K</div>
+                        <div style="margin-top:0.4rem;"><strong style="color:#a78bfa;">Inventory:</strong> I</div>
+                        <div style="margin-top:0.4rem;"><strong style="color:#a78bfa;">Pause:</strong> ESC</div>
+                        <div style="margin-top:0.8rem; color:#6b6b80;">Walk into enemies to fight them. Clear all enemies to advance.</div>
+                    </div>
+                }
+            </div>
+            break;
+
+        case GameScreen.Intro:
+            <div class="story-screen">
+                <div class="story-box">@StoryContent.Introduction</div>
+                <div class="story-input">
+                    <label>Your name:</label>
+                    <input @bind="_playerName" @bind:event="oninput"
+                           @onkeydown="OnNameKeyDown" autofocus placeholder="Enter your name..." />
+                </div>
+                <button class="continue-btn" @onclick="OnSubmitName"
+                        disabled="@string.IsNullOrWhiteSpace(_playerName)">Continue</button>
+            </div>
+            break;
+
+        case GameScreen.IntroTransition:
+            <div class="story-screen">
+                <div class="story-box">
+                    @StoryContent.AfterIntro(Engine.Player.Name)
+
+                    @StoryContent.TutorialTransition
+                </div>
+                <button class="continue-btn" @onclick="OnStartTutorial">Enter the Cellar...</button>
+            </div>
+            break;
+
+        case GameScreen.Tutorial:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas"></canvas>
+                <div class="hud-bar">
+                    <span class="hp">HP: @Engine.Player.Stats.Health.ToString("F0")/@Engine.Player.Stats.MaxHealth.ToString("F0")</span>
+                    <span class="lv">Lv: @Engine.Player.Level</span>
+                    <span class="xp">EXP: @Engine.Player.Experience/@Engine.Player.ExperienceRequired</span>
+                    <span class="hint">[I] Inventory &nbsp; [ESC] Pause &nbsp; WASD to move</span>
+                </div>
+
+                @* Tutorial overlay *@
+                <div class="combat-overlay" @onclick="OnDismissTutorial">
+                    <div class="combat-panel" style="max-width: 420px; text-align: center;">
+                        <h3 style="color: #a78bfa; font-size: 1.3rem;">Welcome, Adventurer</h3>
+                        <div style="margin-top: 1rem; line-height: 2; font-size: 0.9rem; color: #9898b0;">
+                            <div>Move with <strong style="color:#e0e0f0;">W A S D</strong> or arrow keys</div>
+                            <div>Walk into enemies to fight them</div>
+                            <div>Press <strong style="color:#e0e0f0;">I</strong> to open inventory</div>
+                            <div>Press <strong style="color:#e0e0f0;">ESC</strong> to pause</div>
+                        </div>
+                        <button class="continue-btn" style="margin-top: 1.5rem;">Click to begin</button>
+                    </div>
+                </div>
+            </div>
+            break;
+
+        case GameScreen.Exploring:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas"></canvas>
+                <div class="hud-bar">
+                    <span class="hp">HP: @Engine.Player.Stats.Health.ToString("F0")/@Engine.Player.Stats.MaxHealth.ToString("F0")</span>
+                    <span class="lv">Lv: @Engine.Player.Level</span>
+                    <span class="xp">EXP: @Engine.Player.Experience/@Engine.Player.ExperienceRequired</span>
+                    <span class="hint">[I] Inventory &nbsp; [ESC] Pause &nbsp; WASD to move</span>
+                </div>
+            </div>
+            break;
+
+        case GameScreen.Combat:
+        case GameScreen.Victory:
+        case GameScreen.Defeat:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas" style="opacity: 0.3;"></canvas>
+            </div>
+            <div class="combat-overlay">
+                <div class="combat-panels">
+                    @* Player panel *@
+                    <div class="combat-panel">
+                        <h3 class="player-name">@Engine.Player.Name</h3>
+                        <div class="health-bar-container">
+                            <div class="health-bar-fill player"
+                                 style="width: @(HealthPct(Engine.Player))%"></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Health</span>
+                            <span class="value">@Engine.Player.Stats.Health.ToString("F0") / @Engine.Player.Stats.MaxHealth.ToString("F0")</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Level</span>
+                            <span class="value">@Engine.Player.Level</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Damage</span>
+                            <span class="value">@Engine.Player.Damage.ToString("F1")</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Armor</span>
+                            <span class="value">@Engine.Player.Stats.Armor.ToString("F0")</span>
+                        </div>
+                    </div>
+
+                    @* Enemy panel *@
+                    @if (Engine.CurrentEnemy != null)
+                    {
+                        <div class="combat-panel">
+                            <h3 class="enemy-name">@Engine.CurrentEnemy.Name</h3>
+                            <div class="health-bar-container">
+                                <div class="health-bar-fill enemy"
+                                     style="width: @(HealthPct(Engine.CurrentEnemy))%"></div>
+                            </div>
+                            <div class="stat-row">
+                                <span>Health</span>
+                                <span class="value">@Engine.CurrentEnemy.Stats.Health.ToString("F0") / @Engine.CurrentEnemy.Stats.MaxHealth.ToString("F0")</span>
+                            </div>
+                            <div class="stat-row">
+                                <span>Level</span>
+                                <span class="value">@Engine.CurrentEnemy.Level</span>
+                            </div>
+                            <div class="stat-row">
+                                <span>Type</span>
+                                <span class="value">@Engine.CurrentEnemy.MonsterType</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="combat-log @Engine.CombatLogClass">@Engine.CombatLog</div>
+
+                @foreach (var loot in Engine.LootLog)
+                {
+                    <div class="combat-log loot">@loot</div>
+                }
+
+                @if (Engine.Screen == GameScreen.Combat)
+                {
+                    <div class="combat-actions">
+                        <button class="combat-btn attack" @onclick="Engine.CombatAttack">[K] Attack</button>
+                        <button class="combat-btn run" @onclick="Engine.CombatRun">[R] Run Away</button>
+                    </div>
+                }
+                else
+                {
+                    <button class="continue-btn" @onclick="OnReturnFromCombat">Continue</button>
+                }
+            </div>
+            break;
+
+        case GameScreen.Inventory:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas" style="opacity: 0.3;"></canvas>
+            </div>
+            <div class="inventory-overlay" @onclick="OnCloseInventory">
+                <div class="inventory-panel" @onclick:stopPropagation="true">
+                    <h2>Inventory</h2>
+                    <div class="inv-stats">
+                        <div class="stat-row"><span>Name</span><span class="value">@Engine.Player.Name</span></div>
+                        <div class="stat-row"><span>Level</span><span class="value">@Engine.Player.Level</span></div>
+                        <div class="stat-row"><span>Health</span><span class="value" style="color:#22c55e;">@Engine.Player.Stats.Health.ToString("F0")/@Engine.Player.Stats.MaxHealth.ToString("F0")</span></div>
+                        <div class="stat-row"><span>Attack</span><span class="value">@Engine.Player.Stats.AttackPower</span></div>
+                        <div class="stat-row"><span>Armor</span><span class="value">@Engine.Player.Stats.Armor.ToString("F0")</span></div>
+                        <div class="stat-row"><span>Damage</span><span class="value">@Engine.Player.Damage.ToString("F1")</span></div>
+                    </div>
+
+                    @if (Engine.Player.Bag.Items.Count == 0)
+                    {
+                        <div style="color: #6b6b80; padding: 1rem; text-align: center;">(empty)</div>
+                    }
+                    else
+                    {
+                        @foreach (var item in Engine.Player.Bag.Items)
+                        {
+                            <div class="inv-item @(item.IsEquipped ? "equipped" : "")"
+                                 @onclick="() => OnItemClick(item)">
+                                <span>
+                                    @item.Name
+                                    @if (item.MaxQuantity > 1)
+                                    {
+                                        <span class="qty">x@(item.Quantity)</span>
+                                    }
+                                    @if (item.IsEquipped)
+                                    {
+                                        <span class="tag">[Equipped]</span>
+                                    }
+                                </span>
+                                <span style="color: #6b6b80; font-size: 0.75rem;">
+                                    @if (item.IsEquippable && !item.IsEquipped)
+                                    {
+                                        @:Equip
+                                    }
+                                    else if (item.IsConsumable)
+                                    {
+                                        @:Use
+                                    }
+                                </span>
+                            </div>
+                        }
+                    }
+
+                    <div class="inv-close">Press [ESC] or click outside to close</div>
+                </div>
+            </div>
+            break;
+
+        case GameScreen.Paused:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas" style="opacity: 0.3;"></canvas>
+            </div>
+            <div class="pause-overlay" @onclick="OnResume">
+                <div class="pause-panel" @onclick:stopPropagation="true">
+                    <h2>Paused</h2>
+                    <button class="menu-btn" @onclick="OnResume">Resume Game</button>
+                    <button class="menu-btn" @onclick="OnReturnToMenu">Return to Menu</button>
+                </div>
+            </div>
+            break;
+
+        case GameScreen.MapCleared:
+            <div class="game-container">
+                <canvas id="gameCanvas" class="game-canvas" style="opacity: 0.3;"></canvas>
+            </div>
+            <div class="combat-overlay">
+                <div class="combat-panel" style="text-align: center; max-width: 400px;">
+                    <h3 style="color: #eab308; font-size: 1.3rem;">Area Cleared!</h3>
+                    <div style="margin-top: 1rem; color: #9898b0;">
+                        You've cleared @(Engine.CurrentMap?.Name ?? "the area")!
+                    </div>
+                    <div style="margin-top: 0.5rem; color: #6b6b80;">A new area awaits...</div>
+                    <button class="continue-btn" style="margin-top: 1.5rem;" @onclick="OnAdvanceMap">Continue</button>
+                </div>
+            </div>
+            break;
+    }
+
+</div>
+
+@code {
+    private ElementReference _container;
+    private Timer? _gameTimer;
+    private string _playerName = "";
+    private bool _showControls = false;
+    private GameScreen? _canvasInitForScreen = null;
+
+    protected override void OnInitialized()
+    {
+        Engine.OnStateChanged += OnEngineStateChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var currentGroup = CanvasGroup(Engine.Screen);
+        var initGroup = _canvasInitForScreen.HasValue ? CanvasGroup(_canvasInitForScreen.Value) : null;
+
+        // Re-init canvas only when the canvas DOM element is new
+        // (i.e., when we moved to a different switch case / canvas group)
+        if (currentGroup != null && currentGroup != initGroup)
+        {
+            await Task.Delay(80);
+            try
+            {
+                await Engine.InitCanvas("gameCanvas");
+                await Engine.DrawMap();
+                _canvasInitForScreen = Engine.Screen;
+                StartGameLoop();
+            }
+            catch
+            {
+                // Canvas not in DOM yet, will retry next render
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns which "canvas group" the screen belongs to.
+    /// Screens in the same group share the same canvas DOM element (same switch case).
+    /// Returns null if the screen has no canvas.
+    /// </summary>
+    private static int? CanvasGroup(GameScreen screen) => screen switch
+    {
+        GameScreen.Tutorial => 1,
+        GameScreen.Exploring => 2,
+        GameScreen.Combat or GameScreen.Victory or GameScreen.Defeat => 3,
+        GameScreen.Inventory => 4,
+        GameScreen.Paused => 5,
+        GameScreen.MapCleared => 6,
+        _ => null
+    };
+
+    private bool NeedsCanvas() => CanvasGroup(Engine.Screen) != null;
+
+    private void StartGameLoop()
+    {
+        _gameTimer?.Dispose();
+        _gameTimer = new Timer(async _ =>
+        {
+            try
+            {
+                if (Engine.Screen == GameScreen.Exploring)
+                {
+                    bool needsRedraw = await Engine.Tick();
+                    if (needsRedraw)
+                    {
+                        await Engine.DrawMap();
+                    }
+                }
+                else if (Engine.Screen == GameScreen.Combat)
+                {
+                    // Handle keyboard in combat
+                    if (await Engine.ConsumeKey("k"))
+                    {
+                        Engine.CombatAttack();
+                    }
+                    else if (await Engine.ConsumeKey("r"))
+                    {
+                        Engine.CombatRun();
+                        await Engine.DrawMap();
+                    }
+                }
+                else if (Engine.Screen == GameScreen.Inventory || Engine.Screen == GameScreen.Paused)
+                {
+                    if (await Engine.ConsumeKey("escape"))
+                    {
+                        await Engine.CloseOverlay();
+                    }
+                }
+            }
+            catch { /* Swallow errors during tick to keep loop alive */ }
+        }, null, 0, 33); // ~30fps
+    }
+
+    private void OnEngineStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    // ── Event Handlers ─────────────────────────────────────
+
+    private void OnNewGame()
+    {
+        _canvasInitForScreen = null;
+        Engine.NewGame();
+    }
+
+    private void OnControls()
+    {
+        _showControls = !_showControls;
+    }
+
+    private void OnNameKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(_playerName))
+        {
+            OnSubmitName();
+        }
+    }
+
+    private void OnSubmitName()
+    {
+        if (!string.IsNullOrWhiteSpace(_playerName))
+        {
+            Engine.SetPlayerName(_playerName.Trim());
+        }
+    }
+
+    private async Task OnStartTutorial()
+    {
+        _canvasInitForScreen = null;
+        Engine.StartTutorial();
+    }
+
+    private void OnDismissTutorial()
+    {
+        Engine.StartExploring();
+    }
+
+    private async Task OnReturnFromCombat()
+    {
+        await Engine.ReturnFromCombat();
+    }
+
+    private void OnItemClick(Item item)
+    {
+        if (item.IsEquippable && !item.IsEquipped)
+            Engine.EquipItem(item);
+        else if (item.IsConsumable)
+            Engine.UseItem(item);
+    }
+
+    private async Task OnCloseInventory()
+    {
+        await Engine.CloseOverlay();
+    }
+
+    private async Task OnResume()
+    {
+        await Engine.CloseOverlay();
+    }
+
+    private void OnReturnToMenu()
+    {
+        _canvasInitForScreen = null;
+        _gameTimer?.Dispose();
+        Engine.ReturnToMenu();
+    }
+
+    private async Task OnAdvanceMap()
+    {
+        _canvasInitForScreen = null;
+        Engine.AdvanceMap();
+    }
+
+    private static int HealthPct(Entity entity)
+    {
+        if (entity.Stats.MaxHealth <= 0) return 0;
+        return Math.Clamp((int)(entity.Stats.Health / entity.Stats.MaxHealth * 100), 0, 100);
+    }
+
+    public void Dispose()
+    {
+        _gameTimer?.Dispose();
+        Engine.OnStateChanged -= OnEngineStateChanged;
+    }
+}
