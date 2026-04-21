@@ -1,53 +1,51 @@
-﻿using LostBoy.Items;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace LostBoy.Items;
 
-namespace LostBoy
+/// <summary>
+/// Manages a collection of items with slot limits and equip tracking.
+/// </summary>
+public class Inventory
 {
-    public class Inventory
+    private const int MaxSlots = 10;
+
+    public List<Item> Items { get; } = new();
+
+    public int EquippedCount => Items.Count(i => i.IsEquipped);
+    public int FreeSlots => MaxSlots - (Items.Count - EquippedCount);
+
+    /// <summary>
+    /// Add an item to inventory. Stacks if a matching item exists and has room.
+    /// </summary>
+    public bool AddItem(Item item, int quantity = 1)
     {
-        private const int MAX_ITEM_SLOTS = 10;
-        public List<ObtainableItem> InventoryItems { get; protected set; } = new List<ObtainableItem>();
-        public int EquippedItems = 0;
-        
-        public void AddItem(ObtainableItem item, int quantity)
+        // Try to stack with existing item of same type
+        var existing = Items.FirstOrDefault(i => i.Id == item.Id);
+        if (existing != null)
         {
-            bool MatchFound = false;
-            EquippedItems = 0;
-            foreach (var piece in InventoryItems)
-            {
-                if (piece.bIsEquipped) EquippedItems++;
-                if (item.ID == piece.ID)
-                {
-                    if (quantity + piece.Quantity < piece.QuantityMax) piece.Quantity += quantity;
-                    else piece.Quantity = piece.QuantityMax;
-                    MatchFound = true;
-                    break;
-                }
+            existing.Quantity = Math.Min(existing.Quantity + quantity, existing.MaxQuantity);
+            return true;
+        }
 
-               
-            }
- 
+        // Check if we have room (equipped items don't count against bag slots)
+        if (FreeSlots <= 0) return false;
 
-
-            if ((InventoryItems.Count - EquippedItems)< MAX_ITEM_SLOTS && !MatchFound) // Only  create an item if an item slot exists for it and a match is not found for the identifier. 
-            {
-                if(quantity > item.QuantityMax) item.Quantity = item.QuantityMax;
-                else item.Quantity = quantity;
-                InventoryItems.Add(item);
-            }
-                
-         }
-
-
+        item.Quantity = Math.Min(quantity, item.MaxQuantity);
+        Items.Add(item);
+        return true;
     }
 
+    /// <summary>
+    /// Remove an item from inventory entirely.
+    /// </summary>
+    public void RemoveItem(Item item)
+    {
+        Items.Remove(item);
+    }
 
-
-
-
-    
+    /// <summary>
+    /// Remove items with zero or negative quantity (cleanup after consumption).
+    /// </summary>
+    public void PruneEmpty()
+    {
+        Items.RemoveAll(i => i.Quantity <= 0 && !i.IsEquipped);
+    }
 }
