@@ -8,7 +8,11 @@ namespace LostBoy.Systems;
 
 /// <summary>
 /// Main game loop orchestrator.
-/// Replaces the old Map.ScreenMovement / Map.DrawMap / Story.DoIntro static method soup.
+/// Changes from Phase 1:
+/// - Tutorial map + overlay for new players
+/// - Inventory only redraws when something changes (fixes flicker)
+/// - Movement checks map walkability (pillars block movement)
+/// - HUD updates on player movement
 /// </summary>
 public class GameLoop
 {
@@ -32,6 +36,16 @@ public class GameLoop
             Console.Clear();
             Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.Magenta;
+
+            if (OperatingSystem.IsWindows())
+            {
+                try
+                {
+                    Console.SetWindowSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+                    Console.SetBufferSize(Console.LargestWindowWidth / 2, Console.LargestWindowHeight / 2);
+                }
+                catch { }
+            }
 
             if (firstTime)
             {
@@ -84,6 +98,7 @@ public class GameLoop
         Console.ForegroundColor = ConsoleColor.Blue;
         Renderer.TypewriterText(StoryContent.Introduction, 10);
 
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("\n   Enter your name: ");
         string name = Input.ReadLineClean();
         while (string.IsNullOrWhiteSpace(name))
@@ -93,11 +108,19 @@ public class GameLoop
         }
         _player.SetName(name);
 
+        Console.ForegroundColor = ConsoleColor.Blue;
         Renderer.TypewriterText(StoryContent.AfterIntro(name));
+        Thread.Sleep(1500);
+
+        // Story transition into tutorial
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.DarkCyan;
+        Renderer.TypewriterText(StoryContent.TutorialTransition, 15);
         Thread.Sleep(2000);
 
-        _currentMap = new Map(100, 40, 20);
-        EnterMap(_currentMap);
+        // Start with a small, safe tutorial map
+        var tutorial = Map.CreateTutorialMap();
+        EnterMap(tutorial, showTutorial: true);
     }
 
     private bool LoadGame()
@@ -154,11 +177,18 @@ public class GameLoop
 
     // ── Map / Exploration Loop ─────────────────────────────
 
-    private void EnterMap(Map map)
+    private void EnterMap(Map map, bool showTutorial = false)
     {
         _currentMap = map;
         _player.ResetPosition(map.Width, map.Height);
         Renderer.DrawFullMap(map, _player);
+
+        if (showTutorial)
+        {
+            Renderer.DrawTutorialOverlay();
+            Renderer.DrawFullMap(map, _player);
+        }
+
         ExplorationLoop(map);
     }
 
@@ -179,13 +209,20 @@ public class GameLoop
                 Renderer.DrawFullMap(map, _player);
             }
 
+            // Check if all enemies defeated — advance to next map
+            if (map.Enemies.All(e => !e.IsAlive))
+            {
+                HandleMapCleared(map);
+                return;
+            }
+
             // Enemy movement
             foreach (var e in map.Enemies)
             {
-                var oldPos = e.TryRandomMove(1, 1, map.Width - 2, map.Height - 2);
+                var oldPos = e.TryRandomMove(map);
                 if (oldPos.HasValue)
                 {
-                    Renderer.MoveEntity(e, oldPos.Value);
+                    Renderer.MoveEntity(e, oldPos.Value, map);
                 }
             }
 
@@ -202,50 +239,89 @@ public class GameLoop
             // Pause menu
             if (Input.IsKeyDown(Input.VK_ESCAPE))
             {
-                if (HandlePauseMenu(map)) return; // Return to main menu
+                if (HandlePauseMenu(map)) return;
                 Renderer.DrawFullMap(map, _player);
             }
 
-            Thread.Sleep(10); // Prevent busy loop
+            Thread.Sleep(10);
         }
+    }
+
+    /// <summary>
+    /// When all enemies are defeated, congratulate and move to the next map.
+    /// </summary>
+    private void HandleMapCleared(Map map)
+    {
+        Console.Clear();
+
+        if (OperatingSystem.IsWindows())
+        {
+            try
+            {
+                Console.SetWindowSize(60, 15);
+                Console.SetBufferSize(60, 15);
+            }
+            catch { }
+        }
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Renderer.DrawBox(5, 2, 50, 8, " Area Cleared! ");
+        Console.ForegroundColor = ConsoleColor.White;
+        Renderer.WriteAt(8, 4, $"You've cleared {map.Name}!");
+        Renderer.WriteAt(8, 6, "A new area awaits...");
+        Renderer.WriteAt(8, 8, "Press any key to continue.");
+        Console.ReadKey(true);
+
+        // Progress to a harder map
+        Map next;
+        if (map.Difficulty <= 5)
+            next = Map.CreateDungeon();
+        else if (map.Difficulty <= 25)
+            next = Map.CreateCastle();
+        else
+            next = new Map(130, 50, map.Difficulty + 15, "The Abyss");
+
+        EnterMap(next);
     }
 
     private void HandlePlayerMovement(Map map)
     {
-        bool moved = false;
         var oldPos = _player.Position;
-        var newPos = oldPos;
+        Vec2 newPos = oldPos;
+        bool moved = false;
 
-        if (Input.IsKeyDown(Input.VK_W) && oldPos.Y > 1)
+        if (Input.IsKeyDown(Input.VK_W))
         {
             newPos = new Vec2(oldPos.X, oldPos.Y - 1);
             moved = true;
         }
-        else if (Input.IsKeyDown(Input.VK_S) && oldPos.Y < map.Height - 2)
+        else if (Input.IsKeyDown(Input.VK_S))
         {
             newPos = new Vec2(oldPos.X, oldPos.Y + 1);
             moved = true;
         }
-        else if (Input.IsKeyDown(Input.VK_A) && oldPos.X > 1)
+        else if (Input.IsKeyDown(Input.VK_A))
         {
             newPos = new Vec2(oldPos.X - 1, oldPos.Y);
             moved = true;
         }
-        else if (Input.IsKeyDown(Input.VK_D) && oldPos.X < map.Width - 2)
+        else if (Input.IsKeyDown(Input.VK_D))
         {
             newPos = new Vec2(oldPos.X + 1, oldPos.Y);
             moved = true;
         }
 
-        if (moved)
+        // Check walkability (borders + pillars + water)
+        if (moved && map.IsWalkable(newPos))
         {
             _player.Position = newPos;
-            Renderer.MoveEntity(_player, oldPos);
+            Renderer.MoveEntity(_player, oldPos, map);
+            Renderer.DrawHud(map, _player); // Update HUD on move
             Thread.Sleep(50);
         }
     }
 
-    // ── Inventory UI ───────────────────────────────────────
+    // ── Inventory UI (flicker-free) ─────────────────────────
 
     private void HandleInventory()
     {
@@ -258,63 +334,95 @@ public class GameLoop
             return;
         }
 
+        // Draw inventory ONCE on entry
+        Renderer.DrawInventory(_player);
+        bool needsRedraw = false;
+
         while (true)
         {
-            Renderer.DrawInventory(_player);
+            if (needsRedraw)
+            {
+                Renderer.DrawInventory(_player);
+                needsRedraw = false;
+            }
 
             if (Input.IsKeyDown(Input.VK_ESCAPE, 200))
                 return;
 
             if (Input.IsKeyDown(Input.VK_E))
             {
-                Console.SetCursorPosition(2, Console.CursorTop + 2);
-                Console.Write("Select item #: ");
+                int detailRow = 13 + _player.Bag.Items.Count + 3;
+
+                // Clear any previous prompt area
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.SetCursorPosition(2, detailRow + i);
+                    Console.Write(new string(' ', 60));
+                }
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Renderer.WriteAt(2, detailRow, "Select item #: ");
+                Console.CursorVisible = true;
                 int choice = Input.ReadChoice();
+                Console.CursorVisible = false;
 
                 var item = _player.Bag.Items.FirstOrDefault(i => i.InventorySlot == choice);
                 if (item == null) continue;
 
-                // Show item stats
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"\n   {item.Name}");
-                Console.ForegroundColor = ConsoleColor.White;
+                // Show item details in-place
+                Renderer.DrawItemDetail(item, detailRow + 2);
 
-                var s = item.BonusStats;
-                if (s.RequiredLevel > 1) Console.WriteLine($"   Required Level: {s.RequiredLevel}");
-                if (s.Health > 0) Console.WriteLine($"   Health: +{s.Health:F0}");
-                if (s.Armor > 0) Console.WriteLine($"   Armor: +{s.Armor:F0}");
-                if (s.AttackPower > 0) Console.WriteLine($"   Attack Power: +{s.AttackPower}");
-                if (s.Strength > 0) Console.WriteLine($"   Strength: +{s.Strength}");
+                int promptRow = detailRow + 9;
 
                 if (item.IsEquippable && !item.IsEquipped)
                 {
-                    Console.Write("\n   Equip this item? (y/n): ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Renderer.WriteAt(4, promptRow, "Equip this item? (y/n): ");
+                    Console.CursorVisible = true;
                     if (Input.ReadLineClean().ToLower() == "y")
                     {
                         if (_player.EquipItem(item))
-                            Console.WriteLine($"   Equipped {item.Name}!");
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Renderer.WriteAt(4, promptRow + 1, $"Equipped {item.Name}!");
+                        }
                         else
-                            Console.WriteLine("   Cannot equip — level too low.");
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Renderer.WriteAt(4, promptRow + 1, "Cannot equip — level too low.");
+                        }
                         Thread.Sleep(1000);
+                        needsRedraw = true;
                     }
+                    Console.CursorVisible = false;
                 }
                 else if (item.IsEquipped)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine("\n   Already equipped.");
+                    Renderer.WriteAt(4, promptRow, "Already equipped.");
                     Thread.Sleep(800);
                 }
                 else if (item.IsConsumable)
                 {
-                    Console.Write("\n   Use this item? (y/n): ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Renderer.WriteAt(4, promptRow, "Use this item? (y/n): ");
+                    Console.CursorVisible = true;
                     if (Input.ReadLineClean().ToLower() == "y")
                     {
                         if (_player.UseItem(item))
-                            Console.WriteLine($"   Used {item.Name}! (x{item.Quantity} remaining)");
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Renderer.WriteAt(4, promptRow + 1, $"Used {item.Name}! (x{item.Quantity} remaining)");
+                        }
                         else
-                            Console.WriteLine("   Cannot use — level too low.");
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Renderer.WriteAt(4, promptRow + 1, "Cannot use — level too low.");
+                        }
                         Thread.Sleep(1000);
+                        needsRedraw = true;
                     }
+                    Console.CursorVisible = false;
                 }
             }
 
@@ -324,17 +432,14 @@ public class GameLoop
 
     // ── Pause Menu ─────────────────────────────────────────
 
-    /// <summary>
-    /// Returns true if the player wants to return to the main menu.
-    /// </summary>
     private bool HandlePauseMenu(Map map)
     {
-        Thread.Sleep(200); // Debounce
+        Thread.Sleep(200);
         Renderer.DrawPauseMenu();
 
         switch (Input.ReadChoice())
         {
-            case 1: // Save
+            case 1:
                 Console.Write("\n   Save file name: ");
                 string fileName = Input.ReadLineClean();
                 if (string.IsNullOrWhiteSpace(fileName)) fileName = _player.Name;
@@ -344,15 +449,15 @@ public class GameLoop
                 Thread.Sleep(1500);
                 return false;
 
-            case 2: // Quit
+            case 2:
                 Environment.Exit(0);
                 return true;
 
-            case 3: // Main menu
+            case 3:
                 MainMenu();
                 return true;
 
-            case 4: // Continue
+            case 4:
             default:
                 return false;
         }
@@ -367,6 +472,7 @@ public class GameLoop
         Console.Clear();
         Console.Title = "Lost Boy";
         Console.CursorVisible = false;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         if (OperatingSystem.IsWindows())
         {
@@ -376,9 +482,8 @@ public class GameLoop
                     Console.LargestWindowWidth / 2,
                     Console.LargestWindowHeight - 10);
             }
-            catch { /* Not critical if this fails */ }
+            catch { }
 
-            // Disable window resizing via Win32 API
             DisableWindowResize();
         }
     }
@@ -395,20 +500,15 @@ public class GameLoop
     private static void DisableWindowResize()
     {
         if (!OperatingSystem.IsWindows()) return;
-
         try
         {
             const int MF_BYCOMMAND = 0x00000000;
-            const int SC_SIZE = 0xF000;
-            const int SC_MINIMIZE = 0xF020;
-            const int SC_MAXIMIZE = 0xF030;
-
             IntPtr handle = GetConsoleWindow();
             IntPtr sysMenu = GetSystemMenu(handle, false);
-            DeleteMenu(sysMenu, SC_SIZE, MF_BYCOMMAND);
-            DeleteMenu(sysMenu, SC_MINIMIZE, MF_BYCOMMAND);
-            DeleteMenu(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND);
+            DeleteMenu(sysMenu, 0xF000, MF_BYCOMMAND); // SC_SIZE
+            DeleteMenu(sysMenu, 0xF020, MF_BYCOMMAND); // SC_MINIMIZE
+            DeleteMenu(sysMenu, 0xF030, MF_BYCOMMAND); // SC_MAXIMIZE
         }
-        catch { /* Non-critical */ }
+        catch { }
     }
 }

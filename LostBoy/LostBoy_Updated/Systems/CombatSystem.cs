@@ -32,7 +32,7 @@ public static class CombatSystem
             if (Input.IsKeyDown(Input.VK_K))
             {
                 ExchangeBlows(player, enemy);
-                Renderer.DrawCombatScreen(player, enemy);
+                Renderer.UpdateCombatHealth(player, enemy);
                 Thread.Sleep(100);
             }
 
@@ -60,7 +60,7 @@ public static class CombatSystem
         {
             if (player.Bag.AddItem(loot))
             {
-                Renderer.WriteAt(2, 15, $"  Looted: {loot.Name}");
+                Renderer.WriteAt(2, 16, $"  Looted: {loot.Name}");
                 Thread.Sleep(800);
             }
         }

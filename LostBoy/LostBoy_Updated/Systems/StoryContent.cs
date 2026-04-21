@@ -2,29 +2,28 @@ namespace LostBoy.Systems;
 
 /// <summary>
 /// Contains all story/narrative text.
-/// Separated from game logic so content can be edited independently.
 /// </summary>
 public static class StoryContent
 {
     public static readonly string Title = @"
    ┌─────────────────────────────────────────────────────────────────┐
-   │   ___        ________   ________   _________                   │
-   │  |\  \      |\   __  \ |\   ____\ |\___   ___\                │
-   │  \ \  \     \ \  \|\  \\ \  \___|_\|___ \  \_|                │
-   │   \ \  \     \ \  \\\  \\ \_____  \    \ \  \                 │
-   │    \ \  \____ \ \  \\\  \\|____|\  \    \ \  \                │
-   │     \ \_______\\ \_______\ ____\_\  \    \ \__\               │
-   │      \|_______| \|_______||\_________\    \|__|               │
-   │                            \|_________|                        │
-   │                                                                │
-   │         ________   ________       ___    ___                   │
-   │        |\   __  \ |\   __  \     |\  \  /  /|                 │
-   │        \ \  \|\ /_\ \  \|\  \    \ \  \/  / /                │
-   │         \ \   __  \\ \  \\\  \    \ \    / /                  │
-   │          \ \  \|\  \\ \  \\\  \    \/  /  /                   │
-   │           \ \_______\\ \_______\ __/  / /                     │
-   │            \|_______| \|_______||\___/ /                      │
-   │                                  \|___|/                      │
+   │   ___        ________   ________   _________                    │
+   │  |\  \      |\   __  \ |\   ____\ |\___   ___\                  │
+   │  \ \  \     \ \  \|\  \\ \  \___|_\|___ \  \_|                  │
+   │   \ \  \     \ \  \\\  \\ \_____  \    \ \  \                   │
+   │    \ \  \____ \ \  \\\  \\|____|\  \    \ \  \                  │
+   │     \ \_______\\ \_______\ ____\_\  \    \ \__\                 │
+   │      \|_______| \|_______||\_________\    \|__|                 │
+   │                            \|_________|                         │
+   │                                                                 │
+   │         ________   ________       ___    ___                    │
+   │        |\   __  \ |\   __  \     |\  \  /  /|                   │
+   │        \ \  \|\ /_\ \  \|\  \    \ \  \/  / /                   │
+   │         \ \   __  \\ \  \\\  \    \ \    / /                    │
+   │          \ \  \|\  \\ \  \\\  \    \/  /  /                     │
+   │           \ \_______\\ \_______\ __/  / /                       │
+   │            \|_______| \|_______||\___/ /                        │
+   │                                  \|___|/                        │
    └─────────────────────────────────────────────────────────────────┘
 ";
 
@@ -38,20 +37,28 @@ public static class StoryContent
 ";
 
     public static readonly string Controls = @"
-   ┌──────────────────────────────┐
-   │        CONTROLS              │
-   ├──────────────────────────────┤
-   │   W     Move Forward         │
-   │   A     Move Left            │
-   │   S     Move Backward        │
-   │   D     Move Right           │
-   │   I     Inventory            │
-   │   ESC   Pause Menu           │
-   │                              │
-   │   In Combat:                 │
-   │   K     Attack               │
-   │   R     Run Away             │
-   └──────────────────────────────┘
+   ┌──────────────────────────────────┐
+   │          CONTROLS                │
+   ├──────────────────────────────────┤
+   │                                  │
+   │   W     Move Forward             │
+   │   A     Move Left                │
+   │   S     Move Backward            │
+   │   D     Move Right               │
+   │   I     Open Inventory           │
+   │   ESC   Pause / Save Game        │
+   │                                  │
+   │   In Combat:                     │
+   │   K     Attack                   │
+   │   R     Run Away                 │
+   │                                  │
+   │   Tips:                          │
+   │   · Walk into enemies to fight   │
+   │   · Equip armor for defense      │
+   │   · Use potions to heal          │
+   │   · Clear all enemies to advance │
+   │                                  │
+   └──────────────────────────────────┘
 
    Press any key to continue...
 ";
@@ -83,6 +90,15 @@ public static class StoryContent
         "Strangely enough, the man reaches out to hold one of your hands, and proceeds to speak.\n\n" +
         "Unknown Man: \"I've been alone for so long... Please, tell me, what is your name?\"\n";
 
+    public static readonly string TutorialTransition =
+        "\nThe man nods slowly and gestures toward a rusted door at the far end of the room.\n\n" +
+        "Unknown Man: \"Beyond that door lies the cellar. It's where they keep the weaker ones.. " +
+        "the ones that couldn't survive above.\"\n\n" +
+        "He slides a worn chainmail vest and a small vial across the table.\n\n" +
+        "Unknown Man: \"Take these. You'll need them. And remember — those beasts won't wait " +
+        "for you to be ready. Walk toward them, and steel yourself.\"\n\n" +
+        "The door creaks open on its own. The darkness beyond beckons...\n";
+
     public static string AfterIntro(string name)
-        => $"\nAh I see, what a lovely name.. Now how did you end up here, {name}?\n";
+        => $"\nUnknown Man: \"Ah.. {name}. What a name to carry into a place like this.\"\n";
 }

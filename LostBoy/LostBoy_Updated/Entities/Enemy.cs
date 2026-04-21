@@ -1,5 +1,6 @@
 using LostBoy.Core;
 using LostBoy.Items;
+using LostBoy.Maps;
 
 namespace LostBoy.Entities;
 
@@ -48,9 +49,9 @@ public class Enemy : Entity
 
     /// <summary>
     /// Attempt random movement in one of 4 directions.
-    /// Returns the new position (caller handles rendering).
+    /// Returns the old position if moved (caller handles rendering), null otherwise.
     /// </summary>
-    public Vec2? TryRandomMove(int minX, int minY, int maxX, int maxY)
+    public Vec2? TryRandomMove(Map map)
     {
         if (!IsAlive) return null;
 
@@ -60,17 +61,17 @@ public class Enemy : Entity
         var oldPos = Position;
         var newPos = direction switch
         {
-            0 when Position.Y < maxY => new Vec2(Position.X, Position.Y + 1),
-            1 when Position.Y > minY => new Vec2(Position.X, Position.Y - 1),
-            2 when Position.X < maxX => new Vec2(Position.X + 1, Position.Y),
-            3 when Position.X > minX => new Vec2(Position.X - 1, Position.Y),
+            0 => new Vec2(Position.X, Position.Y + 1),
+            1 => new Vec2(Position.X, Position.Y - 1),
+            2 => new Vec2(Position.X + 1, Position.Y),
+            3 => new Vec2(Position.X - 1, Position.Y),
             _ => Position
         };
 
-        if (newPos != oldPos)
+        if (newPos != oldPos && map.IsWalkable(newPos))
         {
             Position = newPos;
-            return oldPos; // Return old position so caller can clear it
+            return oldPos;
         }
 
         return null;

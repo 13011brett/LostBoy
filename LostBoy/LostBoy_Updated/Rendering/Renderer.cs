@@ -6,22 +6,28 @@ using LostBoy.Maps;
 namespace LostBoy.Rendering;
 
 /// <summary>
-/// Handles all console rendering. Game logic classes no longer call Console.Write directly.
-/// This separation makes it possible to swap rendering backends in the future.
+/// Handles all console rendering.
+/// Key improvements:
+/// - Terrain tiles are drawn with color
+/// - Inventory only redraws on changes (no flicker)
+/// - Map has a HUD bar showing key stats
 /// </summary>
 public static class Renderer
 {
-    // Box-drawing characters for a cleaner look
-    private const char BORDER_H = '─';
-    private const char BORDER_V = '│';
-    private const char CORNER_TL = '┌';
-    private const char CORNER_TR = '┐';
-    private const char CORNER_BL = '└';
-    private const char CORNER_BR = '┘';
+    // Box-drawing characters
+    private const char H = '─';
+    private const char V = '│';
+    private const char TL = '┌';
+    private const char TR = '┐';
+    private const char BL = '└';
+    private const char BR = '┘';
+    private const char TJ = '┬';  // T-junction
+    private const char BJ = '┴';
+    private const char LJ = '├';
+    private const char RJ = '┤';
 
-    /// <summary>
-    /// Set up the console window for a map.
-    /// </summary>
+    // ── Map Rendering ───────────────────────────────────────
+
     public static void InitializeMap(Map map)
     {
         Console.Clear();
@@ -31,79 +37,119 @@ public static class Renderer
         {
             try
             {
-                Console.SetWindowSize(map.Width, map.Height);
-                Console.SetBufferSize(map.Width, map.Height);
+                // +1 height for HUD bar below border
+                Console.SetWindowSize(map.Width, map.Height + 1);
+                Console.SetBufferSize(map.Width, map.Height + 1);
             }
-            catch { /* Ignore if we can't resize */ }
+            catch { }
         }
     }
 
-    /// <summary>
-    /// Draw the map border using box-drawing characters.
-    /// </summary>
     public static void DrawBorder(Map map)
     {
-        var prevColor = Console.ForegroundColor;
+        var prev = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.DarkGray;
 
-        // Top border
+        // Top border with map name
         Console.SetCursorPosition(0, 0);
-        Console.Write(CORNER_TL);
-        Console.Write(new string(BORDER_H, map.Width - 2));
-        Console.Write(CORNER_TR);
+        Console.Write(TL);
+        string titleBar = $"{H} {map.Name} ";
+        Console.Write(titleBar);
+        Console.Write(new string(H, Math.Max(0, map.Width - titleBar.Length - 2)));
+        Console.Write(TR);
 
         // Side borders
         for (int y = 1; y < map.Height - 1; y++)
         {
             Console.SetCursorPosition(0, y);
-            Console.Write(BORDER_V);
+            Console.Write(V);
             Console.SetCursorPosition(map.Width - 1, y);
-            Console.Write(BORDER_V);
+            Console.Write(V);
         }
 
         // Bottom border
         Console.SetCursorPosition(0, map.Height - 1);
-        Console.Write(CORNER_BL);
-        Console.Write(new string(BORDER_H, map.Width - 2));
-        Console.Write(CORNER_BR);
+        Console.Write(BL);
+        Console.Write(new string(H, map.Width - 2));
+        Console.Write(BR);
 
-        Console.ForegroundColor = prevColor;
+        Console.ForegroundColor = prev;
     }
 
     /// <summary>
-    /// Draw all living enemies on the map.
+    /// Draw all terrain tiles on the map.
     /// </summary>
+    public static void DrawTerrain(Map map)
+    {
+        for (int y = 1; y < map.Height - 1; y++)
+        {
+            for (int x = 1; x < map.Width - 1; x++)
+            {
+                var tile = map.Terrain[x, y];
+                if (tile.Glyph != ' ')
+                {
+                    Console.ForegroundColor = tile.Color;
+                    Console.SetCursorPosition(x, y);
+                    Console.Write(tile.Glyph);
+                }
+            }
+        }
+    }
+
     public static void DrawEnemies(Map map)
     {
         foreach (var enemy in map.Enemies)
         {
             if (!enemy.IsAlive) continue;
-
-            // Clamp to inside border
             var pos = enemy.Position;
             if (pos.X <= 0 || pos.X >= map.Width - 1 ||
                 pos.Y <= 0 || pos.Y >= map.Height - 1)
                 continue;
-
             DrawEntity(enemy);
         }
     }
 
     /// <summary>
-    /// Draw a single entity at its position.
+    /// Draw a compact HUD bar below the map border.
     /// </summary>
+    public static void DrawHud(Map map, Player player)
+    {
+        int hudY = map.Height;
+        var prev = Console.ForegroundColor;
+
+        // Clear HUD row
+        Console.SetCursorPosition(0, hudY);
+        Console.Write(new string(' ', map.Width));
+
+        // Health
+        Console.ForegroundColor = ConsoleColor.Red;
+        WriteAt(1, hudY, $"HP:{FormatMiniBar(player.Stats.Health, player.Stats.MaxHealth)}");
+
+        // Level + EXP
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        WriteAt(28, hudY, $"Lv:{player.Level}");
+
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        WriteAt(34, hudY, $"EXP:{player.Experience}/{player.ExperienceRequired}");
+
+        // Controls hint
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        string hint = "[I]nventory [ESC]Pause";
+        int hintX = Math.Max(0, map.Width - hint.Length - 2);
+        WriteAt(hintX, hudY, hint);
+
+        Console.ForegroundColor = prev;
+    }
+
     public static void DrawEntity(Entity entity)
     {
-        var prevColor = Console.ForegroundColor;
+        var prev = Console.ForegroundColor;
         Console.ForegroundColor = entity.Color;
         Console.SetCursorPosition(entity.Position.X, entity.Position.Y);
         Console.Write(entity.Icon);
-        Console.ForegroundColor = prevColor;
+        Console.ForegroundColor = prev;
     }
 
-    /// <summary>
-    /// Clear a position on screen.
-    /// </summary>
     public static void ClearPosition(Vec2 pos)
     {
         Console.SetCursorPosition(pos.X, pos.Y);
@@ -111,28 +157,38 @@ public static class Renderer
     }
 
     /// <summary>
-    /// Clear a position and redraw the entity at its new position.
+    /// Clear old position, redraw terrain tile if one exists, draw entity at new position.
     /// </summary>
-    public static void MoveEntity(Entity entity, Vec2 oldPos)
+    public static void MoveEntity(Entity entity, Vec2 oldPos, Map map)
     {
-        ClearPosition(oldPos);
+        // Restore terrain at old position instead of just blanking it
+        var tile = map.Terrain[oldPos.X, oldPos.Y];
+        if (tile.Glyph != ' ')
+        {
+            Console.ForegroundColor = tile.Color;
+            Console.SetCursorPosition(oldPos.X, oldPos.Y);
+            Console.Write(tile.Glyph);
+        }
+        else
+        {
+            ClearPosition(oldPos);
+        }
+
         DrawEntity(entity);
     }
 
-    /// <summary>
-    /// Draw the full map (border + enemies + player).
-    /// </summary>
     public static void DrawFullMap(Map map, Player player)
     {
         InitializeMap(map);
         DrawBorder(map);
+        DrawTerrain(map);
         DrawEnemies(map);
         DrawEntity(player);
+        DrawHud(map, player);
     }
 
-    /// <summary>
-    /// Draw a combat screen.
-    /// </summary>
+    // ── Combat Rendering ────────────────────────────────────
+
     public static void DrawCombatScreen(Player player, Enemy enemy)
     {
         Console.Clear();
@@ -148,50 +204,66 @@ public static class Renderer
         }
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.SetCursorPosition(0, 0);
 
-        DrawBox(0, 0, 40, 7, "Your Stats");
+        // Player panel
+        DrawBox(0, 0, 40, 8, $" {player.Name} ");
+        Console.ForegroundColor = ConsoleColor.Green;
         WriteAt(2, 2, $"Health: {FormatHealthBar(player.Stats.Health, player.Stats.MaxHealth)}");
+        Console.ForegroundColor = ConsoleColor.White;
         WriteAt(2, 3, $"Level:  {player.Level}");
         WriteAt(2, 4, $"EXP:    {player.Experience}/{player.ExperienceRequired}");
         WriteAt(2, 5, $"Damage: {player.Damage:F1}");
+        WriteAt(2, 6, $"Armor:  {player.Stats.Armor:F0}");
 
-        DrawBox(42, 0, 36, 7, $"{enemy.Name}");
+        // Enemy panel
+        DrawBox(42, 0, 36, 8, $" {enemy.Name} ");
         Console.ForegroundColor = enemy.Color;
         WriteAt(44, 2, $"Health: {FormatHealthBar(enemy.Stats.Health, enemy.Stats.MaxHealth)}");
         Console.ForegroundColor = ConsoleColor.White;
         WriteAt(44, 3, $"Level:  {enemy.Level}");
         WriteAt(44, 4, $"Type:   {enemy.MonsterType}");
 
-        WriteAt(2, 9, "╔══════════════════════════════╗");
-        WriteAt(2, 10, "║  [K] Attack    [R] Run Away  ║");
-        WriteAt(2, 11, "╚══════════════════════════════╝");
+        // Action prompt
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        WriteAt(2, 10, "╔══════════════════════════════════╗");
+        WriteAt(2, 11, "║   [K] Attack      [R] Run Away   ║");
+        WriteAt(2, 12, "╚══════════════════════════════════╝");
+        Console.ForegroundColor = ConsoleColor.White;
     }
 
     /// <summary>
-    /// Show a victory message after defeating an enemy.
+    /// Redraw just the health bars during combat (avoids full screen redraw).
     /// </summary>
+    public static void UpdateCombatHealth(Player player, Enemy enemy)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        WriteAt(2, 2, $"Health: {FormatHealthBar(player.Stats.Health, player.Stats.MaxHealth)}   ");
+        Console.ForegroundColor = enemy.Color;
+        WriteAt(44, 2, $"Health: {FormatHealthBar(enemy.Stats.Health, enemy.Stats.MaxHealth)}   ");
+        Console.ForegroundColor = ConsoleColor.White;
+    }
+
     public static void DrawVictory(Enemy enemy)
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
-        WriteAt(2, 13, $"★ {enemy.Name} vanquished! +{enemy.Experience} EXP");
+        WriteAt(2, 14, $"  ★ {enemy.Name} vanquished! +{enemy.Experience} EXP");
         Console.ForegroundColor = ConsoleColor.White;
         Thread.Sleep(1500);
     }
 
-    /// <summary>
-    /// Show a defeat message.
-    /// </summary>
     public static void DrawDefeat()
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        WriteAt(2, 13, "You are too weak to fight! Retreating...");
+        WriteAt(2, 14, "  You are too weak to fight! Retreating...");
         Console.ForegroundColor = ConsoleColor.White;
         Thread.Sleep(2000);
     }
 
+    // ── Inventory Rendering ─────────────────────────────────
+
     /// <summary>
-    /// Draw the inventory screen.
+    /// Draw inventory screen once. Only called when entering inventory
+    /// or after an action changes items — NOT on every tick.
     /// </summary>
     public static void DrawInventory(Player player)
     {
@@ -211,39 +283,53 @@ public static class Renderer
 
         Console.ForegroundColor = ConsoleColor.White;
 
-        DrawBox(0, 0, 50, 10, "Character Stats");
+        // Stats panel
+        DrawBox(0, 0, 50, 10, " Character Stats ");
         int row = 2;
         WriteAt(2, row++, $"Name:    {player.Name}");
         WriteAt(2, row++, $"Level:   {player.Level}");
+
+        Console.ForegroundColor = ConsoleColor.Green;
         WriteAt(2, row++, $"Health:  {FormatHealthBar(player.Stats.Health, player.Stats.MaxHealth)}");
+        Console.ForegroundColor = ConsoleColor.White;
+
         WriteAt(2, row++, $"EXP:     {player.Experience}/{player.ExperienceRequired}");
         WriteAt(2, row++, $"Attack:  {player.Stats.AttackPower}");
         WriteAt(2, row++, $"Armor:   {player.Stats.Armor:F0}");
         WriteAt(2, row++, $"Damage:  {player.Damage:F1}");
 
-        row = 12;
-        DrawBox(0, 11, 70, player.Bag.Items.Count + 4, "Inventory");
-        WriteAt(2, row, "#   Item Name                    Qty   Status");
-        WriteAt(2, row + 1, new string('─', 50));
-        row += 2;
+        // Items panel
+        int itemBoxHeight = Math.Max(4, player.Bag.Items.Count + 4);
+        DrawBox(0, 11, 70, itemBoxHeight, " Inventory ");
 
-        int slot = 1;
-        foreach (var item in player.Bag.Items)
+        row = 13;
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        WriteAt(2, row - 1, "#   Item Name                    Qty   Status");
+        WriteAt(2, row, new string('─', 52));
+        row++;
+
+        if (player.Bag.Items.Count == 0)
         {
-            item.InventorySlot = slot;
-            string status = item.IsEquipped ? "[Equipped]" : "";
-            string qty = item.MaxQuantity > 1 ? $"x{item.Quantity}" : "";
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            WriteAt(4, row, "(empty)");
+        }
+        else
+        {
+            int slot = 1;
+            foreach (var item in player.Bag.Items)
+            {
+                item.InventorySlot = slot;
+                string status = item.IsEquipped ? "[Equipped]" : "";
+                string qty = item.MaxQuantity > 1 ? $"x{item.Quantity}" : "";
 
-            if (item.IsEquipped)
-                Console.ForegroundColor = ConsoleColor.Cyan;
-            else
-                Console.ForegroundColor = ConsoleColor.White;
-
-            WriteAt(2, row, $"{slot,-4}{item.Name,-32}{qty,-6}{status}");
-            row++;
-            slot++;
+                Console.ForegroundColor = item.IsEquipped ? ConsoleColor.Cyan : ConsoleColor.White;
+                WriteAt(2, row, $"{slot,-4}{item.Name,-32}{qty,-6}{status}");
+                row++;
+                slot++;
+            }
         }
 
+        // Controls hint at bottom
         Console.ForegroundColor = ConsoleColor.DarkGray;
         row += 2;
         WriteAt(2, row, "[E] Equip/Use Item    [ESC] Close Inventory");
@@ -251,8 +337,33 @@ public static class Renderer
     }
 
     /// <summary>
-    /// Draw the pause menu.
+    /// Show item details below the inventory list (doesn't redraw everything).
     /// </summary>
+    public static void DrawItemDetail(Item item, int startRow)
+    {
+        // Clear detail area
+        for (int i = 0; i < 8; i++)
+        {
+            Console.SetCursorPosition(2, startRow + i);
+            Console.Write(new string(' ', 60));
+        }
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        WriteAt(2, startRow, $"── {item.Name} ──");
+        Console.ForegroundColor = ConsoleColor.White;
+
+        int r = startRow + 1;
+        var s = item.BonusStats;
+        if (s.RequiredLevel > 1) WriteAt(4, r++, $"Required Level: {s.RequiredLevel}");
+        if (s.Health > 0) WriteAt(4, r++, $"Health:  +{s.Health:F0}");
+        if (s.Armor > 0) WriteAt(4, r++, $"Armor:   +{s.Armor:F0}");
+        if (s.AttackPower > 0) WriteAt(4, r++, $"Attack:  +{s.AttackPower}");
+        if (s.Strength > 0) WriteAt(4, r++, $"Strength: +{s.Strength}");
+        if (s.Dexterity > 0) WriteAt(4, r++, $"Dexterity: +{s.Dexterity}");
+    }
+
+    // ── Pause Menu ──────────────────────────────────────────
+
     public static void DrawPauseMenu()
     {
         Console.Clear();
@@ -268,81 +379,109 @@ public static class Renderer
         }
 
         Console.ForegroundColor = ConsoleColor.White;
-        DrawBox(2, 1, 35, 10, "Paused");
+        DrawBox(2, 1, 35, 10, " Paused ");
         WriteAt(5, 3, "1.  Save Game");
         WriteAt(5, 5, "2.  Quit Game");
         WriteAt(5, 7, "3.  Return to Main Menu");
         WriteAt(5, 9, "4.  Continue Game");
     }
 
+    // ── Tutorial / Onboarding ───────────────────────────────
+
     /// <summary>
-    /// Draw a titled box at a position.
+    /// Overlay a brief tutorial hint on the map.
     /// </summary>
+    public static void DrawTutorialOverlay()
+    {
+        int cx = 10;
+        int cy = 3;
+
+        DrawBox(cx, cy, 42, 12, " Welcome, Adventurer ");
+
+        Console.ForegroundColor = ConsoleColor.White;
+        WriteAt(cx + 2, cy + 2, "Move with  W A S D");
+        WriteAt(cx + 2, cy + 4, "Walk into enemies to fight them.");
+        WriteAt(cx + 2, cy + 5, "In combat: K to attack, R to run.");
+        WriteAt(cx + 2, cy + 7, "Press  I  to open your inventory.");
+        WriteAt(cx + 2, cy + 8, "Press ESC to pause and save.");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        WriteAt(cx + 2, cy + 10, "Press any key to begin...");
+
+        Console.ReadKey(true);
+
+        // We don't need to redraw the whole map — the caller does that
+    }
+
+    // ── Utilities ───────────────────────────────────────────
+
     public static void DrawBox(int x, int y, int width, int height, string title = "")
     {
-        var prevColor = Console.ForegroundColor;
+        var prev = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.DarkGray;
 
-        // Top
         Console.SetCursorPosition(x, y);
-        Console.Write(CORNER_TL);
+        Console.Write(TL);
         if (!string.IsNullOrEmpty(title))
         {
-            string titleBar = $"─ {title} ";
-            Console.Write(titleBar);
-            Console.Write(new string(BORDER_H, Math.Max(0, width - titleBar.Length - 2)));
+            string bar = $"{H}{title}";
+            Console.Write(bar);
+            Console.Write(new string(H, Math.Max(0, width - bar.Length - 2)));
         }
         else
         {
-            Console.Write(new string(BORDER_H, width - 2));
+            Console.Write(new string(H, width - 2));
         }
-        Console.Write(CORNER_TR);
+        Console.Write(TR);
 
-        // Sides
         for (int row = 1; row < height - 1; row++)
         {
             Console.SetCursorPosition(x, y + row);
-            Console.Write(BORDER_V);
+            Console.Write(V);
+            Console.Write(new string(' ', width - 2));
             Console.SetCursorPosition(x + width - 1, y + row);
-            Console.Write(BORDER_V);
+            Console.Write(V);
         }
 
-        // Bottom
         Console.SetCursorPosition(x, y + height - 1);
-        Console.Write(CORNER_BL);
-        Console.Write(new string(BORDER_H, width - 2));
-        Console.Write(CORNER_BR);
+        Console.Write(BL);
+        Console.Write(new string(H, width - 2));
+        Console.Write(BR);
 
-        Console.ForegroundColor = prevColor;
+        Console.ForegroundColor = prev;
     }
 
-    /// <summary>
-    /// Write text at a specific position.
-    /// </summary>
     public static void WriteAt(int x, int y, string text)
     {
         Console.SetCursorPosition(x, y);
         Console.Write(text);
     }
 
-    /// <summary>
-    /// Generate a visual health bar string.
-    /// </summary>
     public static string FormatHealthBar(float current, float max)
     {
         const int barWidth = 15;
-        float pct = max > 0 ? current / max : 0;
+        float pct = max > 0 ? Math.Clamp(current / max, 0, 1) : 0;
         int filled = (int)(pct * barWidth);
         int empty = barWidth - filled;
 
-        string bar = new string('█', Math.Max(0, filled)) + new string('░', Math.Max(0, empty));
+        string bar = new string('█', filled) + new string('░', empty);
         return $"{bar} {current:F0}/{max:F0}";
     }
 
     /// <summary>
-    /// Display text character by character with typewriter effect.
-    /// Press Escape to skip.
+    /// Compact health bar for the HUD.
     /// </summary>
+    public static string FormatMiniBar(float current, float max)
+    {
+        const int barWidth = 10;
+        float pct = max > 0 ? Math.Clamp(current / max, 0, 1) : 0;
+        int filled = (int)(pct * barWidth);
+        int empty = barWidth - filled;
+
+        string bar = new string('█', filled) + new string('░', empty);
+        return $"{bar} {current:F0}/{max:F0}";
+    }
+
     public static void TypewriterText(string text, int delayMs = 10)
     {
         for (int i = 0; i < text.Length; i++)
@@ -356,13 +495,5 @@ public static class Renderer
                 break;
             }
         }
-    }
-
-    /// <summary>
-    /// Transition effect — fills screen then clears.
-    /// </summary>
-    public static void TransitionClear()
-    {
-        Console.Clear();
     }
 }
